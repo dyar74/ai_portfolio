@@ -101,14 +101,14 @@
       "notSpam": { "label": "Не спам?", "desc": "Гілка: спам зупиняється тут; реальні ліди проходять далі." },
       "telegram": { "label": "Повідомлення в Telegram", "desc": "Надсилає власнику повідомлення в Telegram." },
       "email": { "label": "Авто-відповідь на пошту", "desc": "Надсилає локалізовану авто-відповідь відвідувачу (EN/UK)." },
-      "respond": { "desc": "Повертає BFF {{ok, category, priority}}." },
+      "respond": { "desc": "Повертає BFF: ok, category, priority." },
       "respondInvalid": { "label": "Відповідь (помилка)", "desc": "Повертає помилку 422, якщо валідація не пройшла." }
     },
     "translate": {
       "name": "AI-переклад EN ↔ UK",
       "webhook": { "label": "Webhook", "desc": "Точка входу POST /webhook/ai-translate-en-uk." },
       "buildRequest": { "desc": "Формує запит до Gemini з напрямком і тоном." },
-      "parseGemini": { "desc": "Розбирає {{translation, detectedTerms, tokensUsed}}." },
+      "parseGemini": { "desc": "Розбирає translation, detectedTerms, tokensUsed." },
       "respond": { "desc": "Повертає BFF результат перекладу." }
     },
     "summarizer": {
@@ -118,14 +118,14 @@
       "fetch": { "label": "Завантаження сторінки", "desc": "Завантажує HTML сторінки через HTTP." },
       "extract": { "label": "Видобування тексту", "desc": "Прибирає розмітку, залишає зрозумілий текст." },
       "buildRequest": { "desc": "Формує запит до Gemini для TL;DR + 5 пунктів." },
-      "parseGemini": { "desc": "Розбирає {{tldr, bullets}} у локалі UI." },
+      "parseGemini": { "desc": "Розбирає tldr та bullets у локалі UI." },
       "respond": { "desc": "Повертає BFF зведення." }
     },
     "scoring": {
       "name": "Оцінка лідів",
       "webhook": { "label": "Webhook", "desc": "Точка входу POST /webhook/lead-scoring." },
       "buildRequest": { "desc": "Формує запит до Gemini для оцінки компанії 0–100." },
-      "parseValidate": { "label": "Розбір і валідація", "desc": "Розбирає та валідує {{score, reasons, suggestedNextStep}}." },
+      "parseValidate": { "label": "Розбір і валідація", "desc": "Розбирає та валідує score, reasons, suggestedNextStep." },
       "respond": { "desc": "Повертає BFF результат оцінки." }
     }
   },
