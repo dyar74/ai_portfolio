@@ -1,0 +1,153 @@
+# Standalone production file:
+#   docker compose --env-file .env.docker -f docker-compose.prod.yml up -d --build --wait
+# TLS/HSTS: terminate in front (Caddy/Traefik/host nginx) and proxy to 127.0.0.1:${HTTP_PORT}.
+name: portfolio
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-php-env: &php-env
+  APP_ENV: prod
+  APP_DEBUG: "0"
+  APP_SECRET: "${APP_SECRET:?set APP_SECRET in .env.docker}"
+  DATABASE_URL: "mysql://${MYSQL_USER:?}:${MYSQL_PASSWORD:?}@mysql:3306/${MYSQL_DATABASE:?}?serverVersion=8.4&charset=utf8mb4"
+  REDIS_URL: "redis://:${REDIS_PASSWORD:?}@redis:6379"
+  MESSENGER_TRANSPORT_DSN: "redis://:${REDIS_PASSWORD:?}@redis:6379/messages"
+  MAILER_DSN: "${MAILER_DSN:?set MAILER_DSN for production}"
+  N8N_BASE_URL: "${N8N_BASE_URL:-https://n8n.novotek.com.ua}"
+  N8N_WEBHOOK_SECRET: "${N8N_WEBHOOK_SECRET:?}"
+  N8N_HMAC_KEY: "${N8N_HMAC_KEY:?}"
+  N8N_API_KEY: "${N8N_API_KEY:-}"
+  TURNSTILE_SECRET: "${TURNSTILE_SECRET:-}"
+  CONTACT_TO_EMAIL: "${CONTACT_TO_EMAIL:?}"
+  RUN_MIGRATIONS: "0"   # migrations are an explicit deploy step: make prod-migrate
+
+x-php-common: &php-common
+  image: "portfolio-php:${APP_VERSION:-latest}"
+  environment: *php-env
+  restart: unless-stopped
+  security_opt: ["no-new-privileges:true"]
+  cap_drop: [ALL]
+  logging: *logging
+  networks: [app]
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: nginx_prod
+      args:
+        # composer.lock pins Symfony 8.1.x which requires PHP >= 8.4.1
+        PHP_VERSION: "8.4"
+    image: "portfolio-nginx:${APP_VERSION:-latest}"
+    ports:
+      - "127.0.0.1:${HTTP_PORT:-8080}:80"
+    restart: unless-stopped
+    depends_on:
+      php:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/nginx-health || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits: { memory: 64M }
+    logging: *logging
+    networks: [app]
+
+  php:
+    <<: *php-common
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+      target: prod
+      args:
+        # composer.lock pins Symfony 8.1.x which requires PHP >= 8.4.1
+        PHP_VERSION: "8.4"
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f php-fpm >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 60s
+    deploy:
+      resources:
+        limits: { memory: 512M }
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  messenger:
+    <<: *php-common
+    command: ["php", "bin/console", "messenger:consume", "async", "-vv", "--time-limit=3600", "--memory-limit=128M"]
+    deploy:
+      resources:
+        limits: { memory: 256M }
+    depends_on:
+      php:
+        condition: service_healthy
+
+  scheduler:
+    <<: *php-common
+    profiles: [scheduler]
+    command: ["php", "bin/console", "messenger:consume", "scheduler_default", "-vv", "--memory-limit=128M"]
+    depends_on:
+      php:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE:?}"
+      MYSQL_USER: "${MYSQL_USER:?}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:?}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?}"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      resources:
+        limits: { memory: 768M }
+    logging: *logging
+    networks: [app]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD:?}"
+    command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_PASSWORD\" --appendonly yes --maxmemory 128mb --maxmemory-policy volatile-lru"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    deploy:
+      resources:
+        limits: { memory: 192M }
+    logging: *logging
+    networks: [app]
+
+networks:
+  app: {}
+
+volumes:
+  mysql_data: {}
+  redis_data: {}

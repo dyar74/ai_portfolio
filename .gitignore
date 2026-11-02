@@ -1,0 +1,57 @@
+# Dependencies
+/vendor/
+/node_modules/
+/frontend/node_modules/
+
+# Symfony
+/var/
+/public/build/
+/public/bundles/
+.env
+.env.local
+.env.*.local
+/.env.local
+/.env.local.php
+
+# Composer
+composer.phar
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Backup
+backup-*.sql.gz
+
+# Docker
+.env.docker
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> friendsofphp/php-cs-fixer ###
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+###< friendsofphp/php-cs-fixer ###
+
+###> phpunit/phpunit ###
+/phpunit.xml
+/.phpunit.cache/
+###< phpunit/phpunit ###

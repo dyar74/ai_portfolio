@@ -1,0 +1,75 @@
+parameters:
+    app.n8n_base_url: '%env(N8N_BASE_URL)%'
+    app.n8n_webhook_secret: '%env(N8N_WEBHOOK_SECRET)%'
+    app.n8n_hmac_key: '%env(N8N_HMAC_KEY)%'
+    app.n8n_api_key: '%env(N8N_API_KEY)%'
+    app.turnstile_secret: '%env(TURNSTILE_SECRET)%'
+    app.contact_to_email: '%env(CONTACT_TO_EMAIL)%'
+    app.trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
+    app.admin_token: '%env(default::ADMIN_TOKEN)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+            - '../src/Message/'
+
+    # N8n client service (manual wiring for env params)
+    App\Service\N8nClient:
+        arguments:
+            $baseUrl: '%app.n8n_base_url%'
+            $webhookSecret: '%app.n8n_webhook_secret%'
+            $hmacKey: '%app.n8n_hmac_key%'
+            $apiKey: '%app.n8n_api_key%'
+
+    # Demo registry
+    App\Service\DemoRegistry:
+        public: true
+
+    # Demo executor (autowired: N8nClient, DemoRegistry, ValidatorInterface, MessageBusInterface)
+    App\Service\DemoExecutor:
+        public: true
+
+    # Health checker
+    App\Service\HealthChecker:
+        public: true
+        arguments:
+            $cache: '@app_cache'
+
+    # Stats service
+    App\Service\StatsService:
+        public: true
+        arguments:
+            $cache: '@app_cache'
+
+    # Admin controller (manual wiring for the admin token)
+    App\Controller\AdminController:
+        arguments:
+            $adminToken: '%app.admin_token%'
+
+    # Vite extension for Twig (manual wiring)
+    App\Twig\ViteExtension:
+        arguments:
+            $kernel: '@kernel'
+            $publicDir: '%kernel.project_dir%/public'
+
+    # CSP subscriber
+    App\EventListener\CspSubscriber:
+        arguments:
+            $appEnv: '%kernel.environment%'
+            $turnstileSecret: '%app.turnstile_secret%'
+
+    # JSON formatter for monolog stream handlers (referenced as "monolog.formatter.json"
+    # in config/packages/monolog.yaml).
+    monolog.formatter.json:
+        class: Monolog\Formatter\JsonFormatter
+        arguments:
+            # 1 = Monolog\Formatter\JsonFormatter::BATCH_MODE_JSON (YAML cannot resolve PHP constants)
+            - 1
+            - false

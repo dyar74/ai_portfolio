@@ -1,0 +1,36 @@
+monolog:
+    channels: ['app', 'audit', 'n8n']
+
+    handlers:
+        main:
+            type: stream
+            path: '%kernel.project_dir%/var/log/prod.log'
+            level: info
+            formatter: monolog.formatter.json
+        console:
+            type: console
+            process_psr_3_messages: false
+            level: debug
+            channels: ['!event']
+        n8n:
+            type: stream
+            path: '%kernel.project_dir%/var/log/n8n.log'
+            level: info
+            formatter: monolog.formatter.json
+            channels: ['n8n']
+
+when@prod:
+    monolog:
+        handlers:
+            main:
+                level: warning
+            console:
+                level: info
+
+when@dev:
+    monolog:
+        handlers:
+            main:
+                level: debug
+            console:
+                level: debug

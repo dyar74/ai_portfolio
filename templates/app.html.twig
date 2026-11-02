@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="{{ locale|default('en') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+    <title>{{ title|default('Yaroslav Dupliak — AI Automation Engineer') }}</title>
+    <meta name="description" content="{{ description|default('') }}">
+    <link rel="canonical" href="{{ canonical|default('/') }}">
+
+    {# hreflang alternates + x-default #}
+    <link rel="alternate" hreflang="en" href="/en">
+    <link rel="alternate" hreflang="uk" href="/uk">
+    <link rel="alternate" hreflang="x-default" href="/">
+
+    {# Open Graph #}
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ ogTitle|default(title) }}">
+    <meta property="og:description" content="{{ ogDescription|default(description) }}">
+    <meta property="og:url" content="{{ canonical|default('/') }}">
+    <meta property="og:site_name" content="Yaroslav Dupliak">
+    <meta property="og:locale" content="{{ locale|default('en') == 'uk' ? 'uk_UA' : 'en_US' }}">
+    <meta property="og:image" content="{{ ogImage|default('') }}">
+    <meta name="twitter:image" content="{{ ogImage|default('') }}">
+
+    {# Twitter #}
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ ogTitle|default(title) }}">
+    <meta name="twitter:description" content="{{ ogDescription|default(description) }}">
+
+    {# JSON-LD: Person + Service #}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Yaroslav Dupliak",
+        "jobTitle": "AI Automation Engineer",
+        "image": "{{ ogImage|default('') }}",
+        "url": "https://novotek.com.ua/",
+        "email": "mailto:info@novotek.com.ua",
+        "sameAs": [
+            "https://t.me/dyar74",
+            "https://www.linkedin.com/in/duplyak/",
+            "https://github.com/dyar74/"
+        ],
+        "worksFor": { "@type": "Organization", "name": "Novotek" }
+    }
+    </script>
+
+    {{ vite_assets() }}
+</head>
+<body>
+    <div id="app"></div>
+</body>
+</html>

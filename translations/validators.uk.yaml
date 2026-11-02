@@ -1,0 +1,18 @@
+demo.contact:
+    name:
+        not_blank: "Ім'я є обов'язковим"
+        max_length: "Ім'я має бути не довше {{ limit }} символів"
+    email:
+        not_blank: "Email є обов'язковим"
+        email: "Введіть валідну адресу email"
+    message:
+        not_blank: "Повідомлення є обов'язковим"
+        max_length: "Повідомлення має бути не довше {{ limit }} символів"
+demo.translate:
+    text:
+        not_blank: "Текст є обов'язковим"
+        max_length: "Текст має бути не довше {{ limit }} символів"
+demo.summarizer:
+    url:
+        not_blank: "URL є обов'язковим"
+        is_url: "Введіть валідний URL"

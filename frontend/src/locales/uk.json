@@ -1,0 +1,276 @@
+{
+  "meta": {
+    "siteName": "Ярослав Дупляк",
+    "title": "Інженер з AI-автоматизації",
+    "description": "Я створюю надійні інтелектуальні автоматизації з n8n, LLM та AI-агентами.",
+    "ogTitle": "Ярослав Дупляк — Інженер з AI-автоматизації",
+    "ogDescription": "Багатомовний (EN/UK) сайт-візитка з живими демо на n8n."
+  },
+  "nav": {
+    "services": "Послуги",
+    "demos": "Живі демо",
+    "gallery": "Галерея",
+    "process": "Процес",
+    "about": "Про мене",
+    "contact": "Контакти",
+    "skipToContent": "Перейти до контенту",
+    "to": "Перейти до розділу {section}"
+  },
+  "theme": {
+    "toggle": "Змінити тему",
+    "toDark": "Увімкнути темну тему",
+    "toLight": "Увімкнути світлу тему"
+  },
+  "lang": {
+    "label": "Мова",
+    "en": "Англійська",
+    "uk": "Українська"
+  },
+  "hero": {
+    "greeting": "Привіт, я",
+    "name": "Ярослав Дупляк",
+    "title": "Інженер з AI-автоматизації",
+    "tagline": "Я проєктую та запускаю надійні багатомовні автоматизації, які з'єднують ваші інструменти, дані та команду.",
+    "ctaDemo": "Спробувати демо",
+    "ctaContact": "Контакт",
+    "location": "Україна · remote-friendly"
+  },
+  "services": {
+    "heading": "Послуги",
+    "subheading": "Що я можу для вас зробити",
+    "items": {
+      "n8n": {
+        "title": "Автоматизація на n8n",
+        "desc": "Надійні, моніторовані воркфлоу, що склеюють ваш стек."
+      },
+      "llm": {
+        "title": "Інтеграції з LLM",
+        "desc": "OpenAI та Anthropic у продуктах із захистом від помилок."
+      },
+      "agents": {
+        "title": "AI-агенти та RAG",
+        "desc": "Агенти, що читають, аналізують і діють на ваших документах."
+      },
+      "integrations": {
+        "title": "API · CRM · Telegram",
+        "desc": "Інтеграції вашої CRM, API та месенджерів."
+      },
+      "audit": {
+        "title": "Аудит процесів",
+        "desc": "Знаходжу вузькі місця, які варто автоматизувати першими."
+      }
+    }
+  },
+  "demos": {
+    "heading": "Живі демо",
+    "subheading": "Працюють на реальному n8n — без підмінок.",
+    "n8nLive": "n8n онлайн",
+    "n8nDown": "n8n офлайн",
+    "latency": "{ms} мс",
+    "stats": {
+      "heading": "Жива статистика",
+      "empty": "Ще немає запусків — спробуйте першим.",
+      "runs": "запусків",
+      "avgLatency": "середній час",
+      "success": "успішно",
+      "last7d": "Останні 7 днів",
+      "ms": "мс"
+    }
+  },
+  "gallery": {
+    "heading": "Галерея воркфлоу",
+    "subheading": "Повторно використовувані шаблони n8n — дивіться граф і завантажте JSON.",
+    "download": "Завантажити JSON воркфлоу",
+    "nodes": "Вузли",
+    "view": "Відкрити граф",
+    "empty": "Немає даних про воркфлоу."
+  },
+  "wf": {
+    "common": {
+      "buildRequest": { "label": "Формування запиту", "desc": "Формує тіло запиту до Gemini API з вхідних даних." },
+      "gemini": { "label": "Gemini", "desc": "Викликає LLM Gemini (Google) через HTTP для AI-кроку." },
+      "parseGemini": { "label": "Розбір Gemini", "desc": "Розбирає JSON-відповідь Gemini в чистий об'єкт." },
+      "respond": { "label": "Відповідь", "desc": "Повертає остаточний JSON-результат викликанту." }
+    },
+    "contact": {
+      "name": "Заявка → Telegram (прийом лідів)",
+      "webhook": { "label": "Webhook", "desc": "Точка входу POST /webhook/contact-to-telegram." },
+      "validate": { "label": "Валідація", "desc": "Перевіряє наявність і коректність полів заявки." },
+      "buildRequest": { "desc": "Формує запит до Gemini для класифікації ліда (категорія, пріоритет)." },
+      "parseGemini": { "desc": "Розбирає класифікацію: sales / support / spam + пріоритет 1–5." },
+      "notSpam": { "label": "Не спам?", "desc": "Гілка: спам зупиняється тут; реальні ліди проходять далі." },
+      "telegram": { "label": "Повідомлення в Telegram", "desc": "Надсилає власнику повідомлення в Telegram." },
+      "email": { "label": "Авто-відповідь на пошту", "desc": "Надсилає локалізовану авто-відповідь відвідувачу (EN/UK)." },
+      "respond": { "desc": "Повертає BFF {ok, category, priority}." },
+      "respondInvalid": { "label": "Відповідь (помилка)", "desc": "Повертає помилку 422, якщо валідація не пройшла." }
+    },
+    "translate": {
+      "name": "AI-переклад EN ↔ UK",
+      "webhook": { "label": "Webhook", "desc": "Точка входу POST /webhook/ai-translate-en-uk." },
+      "buildRequest": { "desc": "Формує запит до Gemini з напрямком і тоном." },
+      "parseGemini": { "desc": "Розбирає {translation, detectedTerms, tokensUsed}." },
+      "respond": { "desc": "Повертає BFF результат перекладу." }
+    },
+    "summarizer": {
+      "name": "Сумаризатор URL",
+      "webhook": { "label": "Webhook", "desc": "Точка входу POST /webhook/url-summarizer." },
+      "validateUrl": { "label": "Валідація URL", "desc": "Очищає та валідує цільовий URL." },
+      "fetch": { "label": "Завантаження сторінки", "desc": "Завантажує HTML сторінки через HTTP." },
+      "extract": { "label": "Видобування тексту", "desc": "Прибирає розмітку, залишає зрозумілий текст." },
+      "buildRequest": { "desc": "Формує запит до Gemini для TL;DR + 5 пунктів." },
+      "parseGemini": { "desc": "Розбирає {tldr, bullets} у локалі UI." },
+      "respond": { "desc": "Повертає BFF зведення." }
+    },
+    "scoring": {
+      "name": "Оцінка лідів",
+      "webhook": { "label": "Webhook", "desc": "Точка входу POST /webhook/lead-scoring." },
+      "buildRequest": { "desc": "Формує запит до Gemini для оцінки компанії 0–100." },
+      "parseValidate": { "label": "Розбір і валідація", "desc": "Розбирає та валідує {score, reasons, suggestedNextStep}." },
+      "respond": { "desc": "Повертає BFF результат оцінки." }
+    }
+  },
+  "process": {
+    "heading": "Процес",
+    "subheading": "Від ідеї до продакшну, з підтримкою.",
+    "steps": {
+      "audit": {
+        "title": "Аудит",
+        "desc": "Мапаємо ваші процеси та знаходимо найцінніші автоматизації."
+      },
+      "prototype": {
+        "title": "Прототип",
+        "desc": "Працююче демо за дні, а не місяці."
+      },
+      "production": {
+        "title": "Продакшн",
+        "desc": "Зabezпечуємо, захищаємо та моніторимо для реального навантаження."
+      },
+      "support": {
+        "title": "Підтримка",
+        "desc": "Постійні ітерації, алерти та вдосконалення."
+      }
+    }
+  },
+  "about": {
+    "heading": "Про мене",
+    "bio": "Я інженер-автоматизатор, сфокусований на практичному AI. Перетворюю рутинну, схильну до помилок роботу на надійні, спостережувані, багатомовні конвеєри.",
+    "stack": {
+      "heading": "Технології",
+      "items": {
+        "symfony": "Symfony 7",
+        "php": "PHP 8.3",
+        "vue": "Vue 3",
+        "ts": "TypeScript",
+        "tailwind": "Tailwind CSS",
+        "n8n": "n8n",
+        "llm": "OpenAI / Anthropic",
+        "mysql": "MySQL 8.4",
+        "redis": "Redis 7",
+        "vite": "Vite"
+      }
+    }
+  },
+  "contact": {
+    "heading": "Контакти",
+    "subheading": "Розкажіть про свій проєкт — я зв'яжуся з вами.",
+    "form": {
+      "name": "Ім'я",
+      "email": "Email",
+      "message": "Повідомлення",
+      "namePh": "Іван Петренко",
+      "emailPh": "ivan@company.com",
+      "messagePh": "Що ви хотіли б автоматизувати?",
+      "submit": "Надіслати",
+      "submitting": "Надсилається…"
+    },
+    "links": {
+      "heading": "Прямі контакти",
+      "email": "Email",
+      "telegram": "Telegram",
+      "linkedin": "LinkedIn",
+      "github": "GitHub"
+    }
+  },
+  "footer": {
+    "rights": "© {year} Ярослав Дупляк. Усі права захищено.",
+    "n8nLive": "n8n онлайн",
+    "n8nDown": "n8n офлайн",
+    "builtWith": "Зроблено на Symfony, Vue та n8n",
+    "admin": "Адмін"
+  },
+  "common": {
+    "loading": "Завантаження…",
+    "retry": "Спробувати знову",
+    "close": "Закрити",
+    "cancel": "Скасувати",
+    "copy": "Копіювати",
+    "copied": "Скопійовано",
+    "optional": "необов'язково",
+    "charactersLeft": "{n} {word} залишилось",
+    "errors": "Будь ласка, виправте помилки нижче.",
+    "seconds": "{n} {word}"
+  },
+  "demo": {
+    "curl": "Приклад cURL",
+    "rateLimited": "Забагато запитів. Спробуйте через {s}.",
+    "validationError": "Деякі поля недійсні.",
+    "timeout": "Демо переповнило час очікування. Спробуйте ще раз.",
+    "serverError": "Автоматизація тимчасово недоступна. Спробуйте пізніше.",
+    "steps": {
+      "received": "Отримано",
+      "classified": "Класифіковано",
+      "notified": "Повідомлено",
+      "replied": "Відповідано"
+    },
+    "spam": "Повідомлення віднесено до спаму та не було переслане."
+  },
+  "demoContact": {
+    "title": "Заявка → Telegram",
+    "desc": "Надішліть заявку — LLM класифікує її та (якщо не спам) відправить у Telegram + email.",
+    "category": {
+      "sales": "Продажі",
+      "support": "Підтримка",
+      "spam": "Спам"
+    },
+    "priority": "Пріоритет {n}"
+  },
+  "demoTranslate": {
+    "title": "AI переклад EN ⇄ UK",
+    "desc": "Перекладіть короткий текст між англійською та українською з обраним тоном.",
+    "text": "Текст",
+    "direction": "Напрямок",
+    "dirEnUk": "Англійська → Українська",
+    "dirUkEn": "Українська → Англійська",
+    "tone": "Тон",
+    "toneNeutral": "Нейтральний",
+    "toneFormal": "Офіційний",
+    "toneCasual": "Розмовний",
+    "translate": "Перекласти",
+    "result": "Переклад",
+    "terms": "Знайдені терміни",
+    "tokens": "{n} токенів"
+  },
+  "demoSummarize": {
+    "title": "Сумаризація URL",
+    "desc": "Вставте публічний URL статті — отримаєте TL;DR та 5 тез.",
+    "url": "URL",
+    "urlPh": "https://example.com/article",
+    "summarize": "Сумаризувати",
+    "tldr": "Коротко",
+    "bullets": "Ключові моменти"
+  },
+  "demoScore": {
+    "title": "Оцінка ліда",
+    "desc": "Опишіть компанію — отримайте оцінку 0-100, причини та наступний крок.",
+    "description": "Опис компанії",
+    "descPh": "SaaS на 20 осіб шукає автоматизацію підтримки…",
+    "score": "Оцінка",
+    "scoreLabel": "Оцінка ліда: {n}",
+    "reasons": "Чому таке оцінювання",
+    "nextStep": "Рекомендований наступний крок"
+  },
+  "profile": {
+    "photoAlt": "Портрет Ярослава Дупляка",
+    "domain": "novotek.com.ua"
+  }
+}

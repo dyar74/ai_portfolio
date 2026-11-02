@@ -1,0 +1,52 @@
+framework:
+    secret: '%env(APP_SECRET)%'
+    http_method_override: false
+    handle_all_throwables: true
+    # Enables the HttpClient (autowires Symfony\Contracts\HttpClient\HttpClientInterface)
+    http_client:
+        default_options:
+            max_redirects: 3
+
+    # Session
+    session:
+        enabled: false
+
+    # Default locale for the framework (en/uk). Used by translation, validators, etc.
+    default_locale: 'en'
+    # Router
+    router:
+        utf8: true
+
+    # Cache
+    cache:
+        default_redis_provider: '%env(REDIS_URL)%'
+        pools:
+            app_cache:
+                adapter: cache.adapter.redis
+            app_rate_limiter:
+                adapter: cache.adapter.redis
+                default_lifetime: 86400
+
+    # Rate Limiter
+    rate_limiter:
+        demo:
+            policy: sliding_window
+            limit: 5
+            interval: '1 minute'
+            cache_pool: app_rate_limiter
+
+    # Messenger
+    messenger:
+        transports:
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 3
+            failed: 'doctrine://default?queue_name=failed'
+        failure_transport: failed
+
+    # PHP Settings
+    php_errors:
+        log: true

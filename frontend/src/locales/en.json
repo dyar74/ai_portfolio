@@ -1,0 +1,276 @@
+{
+  "meta": {
+    "siteName": "Yaroslav Dupliak",
+    "title": "AI Automation Engineer",
+    "description": "I build intelligent automations with n8n, LLMs and AI agents.",
+    "ogTitle": "Yaroslav Dupliak — AI Automation Engineer",
+    "ogDescription": "Multilingual (EN/UK) business-card site with live, working n8n demos."
+  },
+  "nav": {
+    "services": "Services",
+    "demos": "Live Demos",
+    "gallery": "Gallery",
+    "process": "Process",
+    "about": "About",
+    "contact": "Contact",
+    "skipToContent": "Skip to content",
+    "to": "Go to {section}"
+  },
+  "theme": {
+    "toggle": "Toggle color theme",
+    "toDark": "Switch to dark mode",
+    "toLight": "Switch to light mode"
+  },
+  "lang": {
+    "label": "Language",
+    "en": "English",
+    "uk": "Ukrainian"
+  },
+  "hero": {
+    "greeting": "Hi, I'm",
+    "name": "Yaroslav Dupliak",
+    "title": "AI Automation Engineer",
+    "tagline": "I design and ship reliable, multilingual automation systems that connect your tools, data and teams.",
+    "ctaDemo": "Try live demo",
+    "ctaContact": "Contact",
+    "location": "Ukraine · remote-friendly"
+  },
+  "services": {
+    "heading": "Services",
+    "subheading": "What I can do for you",
+    "items": {
+      "n8n": {
+        "title": "n8n Workflow Automation",
+        "desc": "Reliable, monitorable workflows that glue your stack together."
+      },
+      "llm": {
+        "title": "LLM Integrations",
+        "desc": "OpenAI & Anthropic wired into products with guardrails."
+      },
+      "agents": {
+        "title": "AI Agents & RAG",
+        "desc": "Agents that read, reason and act on your documents."
+      },
+      "integrations": {
+        "title": "API · CRM · Telegram",
+        "desc": "Integrations across your CRM, APIs and messengers."
+      },
+      "audit": {
+        "title": "Process Audits",
+        "desc": "I find the bottlenecks worth automating first."
+      }
+    }
+  },
+  "demos": {
+    "heading": "Live Demos",
+    "subheading": "Powered by a real n8n instance — no fakes.",
+    "n8nLive": "n8n live",
+    "n8nDown": "n8n down",
+    "latency": "{ms} ms",
+    "stats": {
+      "heading": "Live stats",
+      "empty": "No runs yet — be the first to try a demo.",
+      "runs": "runs",
+      "avgLatency": "avg latency",
+      "success": "success",
+      "last7d": "Last 7 days",
+      "ms": "ms"
+    }
+  },
+  "gallery": {
+    "heading": "Workflow Gallery",
+    "subheading": "Reusable n8n templates — inspect the graph and download the JSON.",
+    "download": "Download workflow JSON",
+    "nodes": "Nodes",
+    "view": "Open graph",
+    "empty": "No workflow data available."
+  },
+  "wf": {
+    "common": {
+      "buildRequest": { "label": "Build Request", "desc": "Assembles the Gemini API request body from the input." },
+      "gemini": { "label": "Gemini", "desc": "Calls the Gemini LLM (Google) over HTTP to do the AI step." },
+      "parseGemini": { "label": "Parse Gemini", "desc": "Parses Gemini's JSON response into a clean object." },
+      "respond": { "label": "Respond", "desc": "Returns the final JSON result to the caller." }
+    },
+    "contact": {
+      "name": "Contact → Telegram (Lead Intake)",
+      "webhook": { "label": "Webhook", "desc": "POST /webhook/contact-to-telegram entry point." },
+      "validate": { "label": "Validate", "desc": "Checks that the lead fields are present and well-formed." },
+      "buildRequest": { "desc": "Builds the Gemini request to classify the lead (category, priority)." },
+      "parseGemini": { "desc": "Parses the classification: sales / support / spam + priority 1–5." },
+      "notSpam": { "label": "Not Spam?", "desc": "Branches: spam stops here; real leads continue." },
+      "telegram": { "label": "Telegram Notify", "desc": "Sends a notification to the owner in Telegram." },
+      "email": { "label": "Email Auto-Reply", "desc": "Sends a localized auto-reply to the visitor (EN/UK)." },
+      "respond": { "desc": "Returns {ok, category, priority} to the BFF." },
+      "respondInvalid": { "label": "Respond Invalid", "desc": "Returns a 422 error when validation fails." }
+    },
+    "translate": {
+      "name": "AI Translate EN ↔ UK",
+      "webhook": { "label": "Webhook", "desc": "POST /webhook/ai-translate-en-uk entry point." },
+      "buildRequest": { "desc": "Builds the Gemini request with direction + tone." },
+      "parseGemini": { "desc": "Parses {translation, detectedTerms, tokensUsed}." },
+      "respond": { "desc": "Returns the translation result to the BFF." }
+    },
+    "summarizer": {
+      "name": "URL Summarizer",
+      "webhook": { "label": "Webhook", "desc": "POST /webhook/url-summarizer entry point." },
+      "validateUrl": { "label": "Validate URL", "desc": "Sanitizes and validates the target URL." },
+      "fetch": { "label": "Fetch Page", "desc": "Fetches the page HTML over HTTP." },
+      "extract": { "label": "Extract Text", "desc": "Strips markup down to readable text." },
+      "buildRequest": { "desc": "Builds the Gemini request for a TL;DR + 5 bullets." },
+      "parseGemini": { "desc": "Parses {tldr, bullets} in the UI locale." },
+      "respond": { "desc": "Returns the summary to the BFF." }
+    },
+    "scoring": {
+      "name": "Lead Scoring",
+      "webhook": { "label": "Webhook", "desc": "POST /webhook/lead-scoring entry point." },
+      "buildRequest": { "desc": "Builds the Gemini request to score the company 0–100." },
+      "parseValidate": { "label": "Parse & Validate", "desc": "Parses and validates {score, reasons, suggestedNextStep}." },
+      "respond": { "desc": "Returns the scoring result to the BFF." }
+    }
+  },
+  "process": {
+    "heading": "Process",
+    "subheading": "From idea to production, with support.",
+    "steps": {
+      "audit": {
+        "title": "Audit",
+        "desc": "Map your processes and find the highest-leverage automations."
+      },
+      "prototype": {
+        "title": "Prototype",
+        "desc": "A working demo in days, not months."
+      },
+      "production": {
+        "title": "Production",
+        "desc": "Harden, secure and monitor for real traffic."
+      },
+      "support": {
+        "title": "Support",
+        "desc": "Ongoing iteration, alerts and improvements."
+      }
+    }
+  },
+  "about": {
+    "heading": "About",
+    "bio": "I'm an automation engineer focused on practical AI. I turn repetitive, error-prone work into reliable, observable, multilingual pipelines.",
+    "stack": {
+      "heading": "Tech stack",
+      "items": {
+        "symfony": "Symfony 7",
+        "php": "PHP 8.3",
+        "vue": "Vue 3",
+        "ts": "TypeScript",
+        "tailwind": "Tailwind CSS",
+        "n8n": "n8n",
+        "llm": "OpenAI / Anthropic",
+        "mysql": "MySQL 8.4",
+        "redis": "Redis 7",
+        "vite": "Vite"
+      }
+    }
+  },
+  "contact": {
+    "heading": "Contact",
+    "subheading": "Tell me about your project — I'll get back to you.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "namePh": "Jane Doe",
+      "emailPh": "jane@company.com",
+      "messagePh": "What would you like to automate?",
+      "submit": "Send message",
+      "submitting": "Sending…"
+    },
+    "links": {
+      "heading": "Direct links",
+      "email": "Email",
+      "telegram": "Telegram",
+      "linkedin": "LinkedIn",
+      "github": "GitHub"
+    }
+  },
+  "footer": {
+    "rights": "© {year} Yaroslav Dupliak. All rights reserved.",
+    "n8nLive": "n8n live",
+    "n8nDown": "n8n down",
+    "builtWith": "Built with Symfony, Vue & n8n",
+    "admin": "Admin"
+  },
+  "common": {
+    "loading": "Loading…",
+    "retry": "Try again",
+    "close": "Close",
+    "cancel": "Cancel",
+    "copy": "Copy",
+    "copied": "Copied",
+    "optional": "optional",
+    "charactersLeft": "{n} {word} left",
+    "errors": "Please fix the errors below.",
+    "seconds": "{n} {word}"
+  },
+  "demo": {
+    "curl": "cURL example",
+    "rateLimited": "Too many requests. Try again in {s}.",
+    "validationError": "Some fields are invalid.",
+    "timeout": "The demo timed out. Please try again.",
+    "serverError": "The automation is unavailable right now. Please try again later.",
+    "steps": {
+      "received": "Received",
+      "classified": "Classified",
+      "notified": "Notified",
+      "replied": "Replied"
+    },
+    "spam": "This message was classified as spam and was not forwarded."
+  },
+  "demoContact": {
+    "title": "Contact → Telegram",
+    "desc": "Send a lead — it's classified by an LLM and (if not spam) routed to Telegram + email.",
+    "category": {
+      "sales": "Sales",
+      "support": "Support",
+      "spam": "Spam"
+    },
+    "priority": "Priority {n}"
+  },
+  "demoTranslate": {
+    "title": "AI Translate EN ⇄ UK",
+    "desc": "Translate a short text between English and Ukrainian with a chosen tone.",
+    "text": "Text",
+    "direction": "Direction",
+    "dirEnUk": "English → Ukrainian",
+    "dirUkEn": "Ukrainian → English",
+    "tone": "Tone",
+    "toneNeutral": "Neutral",
+    "toneFormal": "Formal",
+    "toneCasual": "Casual",
+    "translate": "Translate",
+    "result": "Translation",
+    "terms": "Detected terms",
+    "tokens": "{n} tokens"
+  },
+  "demoSummarize": {
+    "title": "URL Summarizer",
+    "desc": "Paste a public article URL — get a TL;DR and 5 bullets.",
+    "url": "URL",
+    "urlPh": "https://example.com/article",
+    "summarize": "Summarize",
+    "tldr": "TL;DR",
+    "bullets": "Key points"
+  },
+  "demoScore": {
+    "title": "Lead Scoring",
+    "desc": "Describe a company — get a 0-100 score, reasons and a next step.",
+    "description": "Company description",
+    "descPh": "A 20-person SaaS looking to automate support…",
+    "score": "Score",
+    "scoreLabel": "Lead score: {n}",
+    "reasons": "Why this score",
+    "nextStep": "Suggested next step"
+  },
+  "profile": {
+    "photoAlt": "Portrait of Yaroslav Dupliak",
+    "domain": "novotek.com.ua"
+  }
+}

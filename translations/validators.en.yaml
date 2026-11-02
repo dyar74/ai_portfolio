@@ -1,0 +1,18 @@
+demo.contact:
+    name:
+        not_blank: "Name is required"
+        max_length: "Name must be at most {{ limit }} characters"
+    email:
+        not_blank: "Email is required"
+        email: "Please enter a valid email address"
+    message:
+        not_blank: "Message is required"
+        max_length: "Message must be at most {{ limit }} characters"
+demo.translate:
+    text:
+        not_blank: "Text is required"
+        max_length: "Text must be at most {{ limit }} characters"
+demo.summarizer:
+    url:
+        not_blank: "URL is required"
+        is_url: "Please enter a valid URL"
