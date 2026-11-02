@@ -11,7 +11,6 @@ class SummarizerRequest
         #[Assert\NotBlank]
         #[Assert\Url]
         #[Assert\Length(max: 2048)]
-        #[Assert\Valid]
         #[SafeUrl]
         public string $url,
     ) {}
