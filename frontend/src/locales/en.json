@@ -101,14 +101,14 @@
       "notSpam": { "label": "Not Spam?", "desc": "Branches: spam stops here; real leads continue." },
       "telegram": { "label": "Telegram Notify", "desc": "Sends a notification to the owner in Telegram." },
       "email": { "label": "Email Auto-Reply", "desc": "Sends a localized auto-reply to the visitor (EN/UK)." },
-      "respond": { "desc": "Returns {ok, category, priority} to the BFF." },
+      "respond": { "desc": "Returns {{ok, category, priority}} to the BFF." },
       "respondInvalid": { "label": "Respond Invalid", "desc": "Returns a 422 error when validation fails." }
     },
     "translate": {
       "name": "AI Translate EN ↔ UK",
       "webhook": { "label": "Webhook", "desc": "POST /webhook/ai-translate-en-uk entry point." },
       "buildRequest": { "desc": "Builds the Gemini request with direction + tone." },
-      "parseGemini": { "desc": "Parses {translation, detectedTerms, tokensUsed}." },
+      "parseGemini": { "desc": "Parses {{translation, detectedTerms, tokensUsed}}." },
       "respond": { "desc": "Returns the translation result to the BFF." }
     },
     "summarizer": {
@@ -118,14 +118,14 @@
       "fetch": { "label": "Fetch Page", "desc": "Fetches the page HTML over HTTP." },
       "extract": { "label": "Extract Text", "desc": "Strips markup down to readable text." },
       "buildRequest": { "desc": "Builds the Gemini request for a TL;DR + 5 bullets." },
-      "parseGemini": { "desc": "Parses {tldr, bullets} in the UI locale." },
+      "parseGemini": { "desc": "Parses {{tldr, bullets}} in the UI locale." },
       "respond": { "desc": "Returns the summary to the BFF." }
     },
     "scoring": {
       "name": "Lead Scoring",
       "webhook": { "label": "Webhook", "desc": "POST /webhook/lead-scoring entry point." },
       "buildRequest": { "desc": "Builds the Gemini request to score the company 0–100." },
-      "parseValidate": { "label": "Parse & Validate", "desc": "Parses and validates {score, reasons, suggestedNextStep}." },
+      "parseValidate": { "label": "Parse & Validate", "desc": "Parses and validates {{score, reasons, suggestedNextStep}}." },
       "respond": { "desc": "Returns the scoring result to the BFF." }
     }
   },
