@@ -178,7 +178,7 @@
       "email": "Email",
       "message": "Message",
       "namePh": "Jane Doe",
-      "emailPh": "jane@company.com",
+      "emailPh": "email address",
       "messagePh": "What would you like to automate?",
       "submit": "Send message",
       "submitting": "Sending…"
