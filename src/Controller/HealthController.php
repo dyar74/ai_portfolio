@@ -7,7 +7,7 @@ namespace App\Controller;
 use App\Service\HealthChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * GET /api/health — pings n8n (cached 30s in Redis via HealthChecker).
