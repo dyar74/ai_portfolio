@@ -240,4 +240,10 @@ npm run build      # Vite build → ../public/build
 
 ## License
 
-Proprietary. © Yaroslav Dupliak.
+Apache License 2.0 — see [LICENSE](LICENSE) for details.
+
+© Yaroslav Dupliak
+
+## AI-Assisted
+
+This project was created with the assistance of AI tools.
