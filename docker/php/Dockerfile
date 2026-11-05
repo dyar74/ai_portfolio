@@ -50,8 +50,18 @@ USER www-data
 # vendor: production composer dependencies (cached layer)
 ############################################################
 FROM base AS vendor
+# Match the uid/gid of the final non-root user so the build is stable whether
+# it runs as root or www-data, and so the build cache (uid-owned) is consistent.
+ARG UID=1000
+ARG GID=1000
+RUN apk add --no-cache shadow \
+ && usermod -o -u ${UID} www-data \
+ && groupmod -o -g ${GID} www-data
+USER www-data
+WORKDIR /var/www/html
 COPY composer.json composer.lock symfony.lock* ./
-RUN --mount=type=cache,target=/tmp/composer-cache \
+# cache ownership: make sure the mount target is writable by the build user.
+RUN --mount=type=cache,target=/tmp/composer-cache,uid=${UID},gid=${GID},mode=0755 \
     composer install --no-dev --no-interaction --no-progress \
       --no-scripts --no-autoloader --prefer-dist
 
@@ -73,6 +83,8 @@ RUN npm run build
 FROM base AS prod
 ENV APP_ENV=prod APP_DEBUG=0
 
+# Normalise ownership to the final non-root user, so the image is correct no
+# matter which uid the build ran as (root on some prod VMs, 1000 locally).
 COPY docker/php/conf.d-prod/ /usr/local/etc/php/conf.d/
 COPY --from=vendor /var/www/html/vendor ./vendor
 COPY . .
@@ -80,7 +92,7 @@ COPY --from=frontend /app/public/build ./public/build
 
 RUN composer dump-autoload --classmap-authoritative --no-dev --no-scripts \
  && mkdir -p var/cache var/log \
- && chown -R www-data:www-data var
+ && chown -R www-data:www-data /var/www/html
 
 USER www-data
 
