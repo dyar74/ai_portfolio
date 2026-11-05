@@ -55,3 +55,4 @@ backup-*.sql.gz
 /phpunit.xml
 /.phpunit.cache/
 ###< phpunit/phpunit ###
+.env.dev
