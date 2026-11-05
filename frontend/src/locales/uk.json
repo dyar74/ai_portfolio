@@ -195,8 +195,7 @@
     "rights": "© {year} Ярослав Дупляк. Усі права захищено.",
     "n8nLive": "n8n онлайн",
     "n8nDown": "n8n офлайн",
-    "builtWith": "Зроблено на Symfony, Vue та n8n",
-    "admin": "Адмін"
+    "builtWith": "Зроблено на Symfony, Vue та n8n"
   },
   "common": {
     "loading": "Завантаження…",

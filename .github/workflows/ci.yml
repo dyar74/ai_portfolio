@@ -56,7 +56,7 @@ jobs:
       N8N_API_KEY: ci_api_key
       TURNSTILE_SECRET: ''
       CONTACT_TO_EMAIL: test@example.com
-      ADMIN_TOKEN: ci_admin_token
+
     steps:
       - uses: actions/checkout@v4
 

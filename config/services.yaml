@@ -6,7 +6,7 @@ parameters:
     app.turnstile_secret: '%env(TURNSTILE_SECRET)%'
     app.contact_to_email: '%env(CONTACT_TO_EMAIL)%'
     app.trusted_proxies: '%env(default::TRUSTED_PROXIES)%'
-    app.admin_token: '%env(default::ADMIN_TOKEN)%'
+
 
 services:
     _defaults:
@@ -48,10 +48,7 @@ services:
         arguments:
             $cache: '@app_cache'
 
-    # Admin controller (manual wiring for the admin token)
-    App\Controller\AdminController:
-        arguments:
-            $adminToken: '%app.admin_token%'
+
 
     # Vite extension for Twig (manual wiring)
     App\Twig\ViteExtension:

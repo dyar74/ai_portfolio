@@ -195,8 +195,7 @@
     "rights": "© {year} Yaroslav Dupliak. All rights reserved.",
     "n8nLive": "n8n live",
     "n8nDown": "n8n down",
-    "builtWith": "Built with Symfony, Vue & n8n",
-    "admin": "Admin"
+    "builtWith": "Built with Symfony, Vue & n8n"
   },
   "common": {
     "loading": "Loading…",
