@@ -37,7 +37,7 @@ graph LR
 ### Run the stack
 
 ```bash
-# 1. Create .env.docker with random secrets
+# 1. Create the root .env with random secrets (single source of truth for dev + prod)
 cd portfolio-docker
 make init
 
@@ -160,13 +160,13 @@ npm run build      # Vite build → ../public/build
 ## Troubleshooting
 
 ### n8n badge shows "down"
-1. Check `N8N_BASE_URL` is correct in `.env.docker`
+1. Check `N8N_BASE_URL` is correct in `.env` (repo root)
 2. `curl -v https://n8n.novotek.com.ua/healthz` — should return 200
 3. Check n8n is running and the workflows are activated
 4. Check firewall/security groups allow outbound HTTPS from the Docker network
 
 ### Redis connection refused
-1. Verify `REDIS_URL` in `.env.docker` matches the Redis container password
+1. Verify `REDIS_URL` in `.env` (repo root) matches the Redis container password
 2. `make redis` → `PING` → should return `PONG`
 3. Check Redis is running: `make ps`
 
@@ -232,7 +232,7 @@ npm run build      # Vite build → ../public/build
 │   └── vite.config.ts      # Vite config
 ├── n8n/workflows/          # Importable n8n workflow JSON
 ├── docker/                 # Dockerfiles + nginx config (READ-ONLY)
-├── portfolio-docker/       # Makefile + .env.docker
+├── portfolio-docker/       # Makefile
 ├── tests/                  # PHPUnit tests
 ├── .github/workflows/      # CI (GitHub Actions)
 └── public/build/           # Vite build output (committed for prod)

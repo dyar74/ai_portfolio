@@ -3,9 +3,9 @@
 # This Makefile lives in portfolio-docker/, so we `cd` to the repo root first.
 # The env file stays in portfolio-docker/.
 ROOT_DIR ?= ..
-ENV_FILE ?= portfolio-docker/.env.docker
-COMPOSE      ?= cd $(ROOT_DIR) && docker compose --env-file $(ENV_FILE)
-COMPOSE_PROD ?= cd $(ROOT_DIR) && docker compose --env-file $(ENV_FILE) -f docker-compose.prod.yml
+# Single env file: the repo-root .env (auto-loaded by Compose from the CWD after `cd $(ROOT_DIR)`).
+COMPOSE      ?= cd $(ROOT_DIR) && docker compose
+COMPOSE_PROD ?= cd $(ROOT_DIR) && docker compose -f docker-compose.prod.yml
 export HOST_UID ?= $(shell id -u)
 export HOST_GID ?= $(shell id -g)
 
@@ -15,16 +15,16 @@ export HOST_GID ?= $(shell id -g)
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-14s\033[0m %s\n",$$1,$$2}'
 
-# Makefile dir (where .env.docker lives) - robust no matter the CWD make is run from
-MAKE_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+# Repo root (where the single .env lives) - robust no matter the CWD make is run from
+ROOT := $(abspath $(ROOT_DIR))
 
-init: ## Create .env.docker with random secrets
-	@if [ -f $(MAKE_DIR).env.docker ]; then echo ".env.docker already exists"; else \
-	  cp $(MAKE_DIR).env.docker.example $(MAKE_DIR).env.docker; \
+init: ## Create the root .env (from .env.example) with random secrets
+	@if [ -f $(ROOT)/.env ]; then echo ".env already exists at repo root"; else \
+	  cp $(ROOT)/.env.example $(ROOT)/.env; \
 	  for v in MYSQL_PASSWORD MYSQL_ROOT_PASSWORD REDIS_PASSWORD; do \
-	    sed -i.bak "s|^$$v=.*|$$v=$$(openssl rand -hex 16)|" $(MAKE_DIR).env.docker; done; \
-	  sed -i.bak "s|^APP_SECRET=.*|APP_SECRET=$$(openssl rand -hex 32)|" $(MAKE_DIR).env.docker; \
-	  rm -f $(MAKE_DIR).env.docker.bak; echo "Created .env.docker"; fi
+	    sed -i.bak "s|^$v=.*|$v=$(openssl rand -hex 16)|" $(ROOT)/.env; done; \
+	  sed -i.bak "s|^APP_SECRET=.*|APP_SECRET=$(openssl rand -hex 32)|" $(ROOT)/.env; \
+	  rm -f $(ROOT)/.env.bak; echo "Created .env at repo root"; fi
 
 up: ## Build and start the dev stack
 	$(COMPOSE) up -d --build --wait --wait-timeout 300
