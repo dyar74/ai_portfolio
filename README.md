@@ -86,7 +86,6 @@ make logs
 | `TURNSTILE_SECRET` | Cloudflare Turnstile secret (optional) | `0x...` |
 | `CONTACT_TO_EMAIL` | Email for lead notifications | `info@novotek.com.ua` |
 | `TRUSTED_PROXIES` | Comma-separated trusted proxy IPs (empty by default) | `172.16.0.0/12` |
-| `ADMIN_TOKEN` | Shared secret for admin API writes | `php -r "echo bin2hex(random_bytes(32));"` |
 
 ## Development
 
@@ -144,7 +143,6 @@ npm run build      # Vite build → ../public/build
 | `/api/demo/ai-translate-en-uk` | POST | AI translation EN ↔ UK |
 | `/api/demo/url-summarizer` | POST | URL summarization (5 bullets + TL;DR) |
 | `/api/demo/lead-scoring` | POST | Lead scoring (0-100 + reasons) |
-| `/api/admin/content` | GET/POST | Admin content API (token-gated) |
 | `/robots.txt` | GET | robots.txt |
 | `/sitemap.xml` | GET | sitemap.xml (en + uk) |
 
@@ -208,7 +206,7 @@ npm run build      # Vite build → ../public/build
 │   ├── Controller/         # API controllers (thin orchestrators)
 │   ├── Service/            # Business logic (N8nClient, DemoExecutor, etc.)
 │   ├── Dto/                # Request DTOs with validation
-│   ├── Entity/             # Doctrine entities (Lead, DemoRun, SiteContent)
+│   ├── Entity/             # Doctrine entities (Lead, DemoRun)
 │   ├── Repository/         # Doctrine repositories
 │   ├── Message/            # Messenger messages
 │   ├── MessageHandler/     # Message handlers
