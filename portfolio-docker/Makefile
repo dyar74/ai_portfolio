@@ -15,16 +15,25 @@ export HOST_GID ?= $(shell id -g)
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-14s\033[0m %s\n",$$1,$$2}'
 
-# Repo root (where the single .env lives) - robust no matter the CWD make is run from
-ROOT := $(abspath $(ROOT_DIR))
+# Repo root (where the single .env lives). All documented usage runs make from
+# portfolio-docker/ (e.g. `cd portfolio-docker && make init`), so the repo root
+# is the parent of the CWD. (shell pwd gives the true working directory.)
+ROOT := $(abspath $(shell pwd)/..)
 
-init: ## Create the root .env (from .env.example) with random secrets
-	@if [ -f $(ROOT)/.env ]; then echo ".env already exists at repo root"; else \
+# init: Create the root .env (from .env.example) with random secrets.
+# Credentials are stored as PARTS (MYSQL_USER/MYSQL_PASSWORD/MYSQL_DATABASE,
+# REDIS_PASSWORD). DATABASE_URL / REDIS_URL / MESSENGER_TRANSPORT_DSN are DERIVED
+# from those parts (via portfolio-docker/envgen.py) so the DSNs always match the
+# credentials. In prod, docker-compose.prod.yml re-derives the SAME DSNs from the
+# same parts and injects them into the container (the baked .env.dist has them
+# empty, so Compose's values always win).
+init: ## Create the root .env (from .env.example) with random secrets + derived DSNs
+	@if [ -f $(ROOT)/.env ]; then \
+	  echo ".env already exists at repo root (delete it first if you want a fresh one)"; \
+	else \
 	  cp $(ROOT)/.env.example $(ROOT)/.env; \
-	  for v in MYSQL_PASSWORD MYSQL_ROOT_PASSWORD REDIS_PASSWORD; do \
-	    sed -i.bak "s|^$v=.*|$v=$(openssl rand -hex 16)|" $(ROOT)/.env; done; \
-	  sed -i.bak "s|^APP_SECRET=.*|APP_SECRET=$(openssl rand -hex 32)|" $(ROOT)/.env; \
-	  rm -f $(ROOT)/.env.bak; echo "Created .env at repo root"; fi
+	  python3 $(ROOT)/portfolio-docker/envgen.py $(ROOT)/.env; \
+	fi
 
 up: ## Build and start the dev stack
 	$(COMPOSE) up -d --build --wait --wait-timeout 300
