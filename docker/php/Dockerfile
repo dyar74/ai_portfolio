@@ -90,6 +90,11 @@ COPY --from=vendor /var/www/html/vendor ./vendor
 COPY . .
 COPY --from=frontend /app/public/build ./public/build
 
+# Bake a secret-free default .env into the image so Symfony's runtime can boot
+# bin/console / the app inside the container (no bind mount in prod). Real
+# values are injected by Compose at runtime; Dotenv does not override them.
+COPY --chmod=0644 .env.dist /var/www/html/.env
+
 RUN composer dump-autoload --classmap-authoritative --no-dev --no-scripts \
  && mkdir -p var/cache var/log \
  && chown -R www-data:www-data /var/www/html \

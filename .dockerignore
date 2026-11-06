@@ -14,12 +14,16 @@ frontend/node_modules
 vendor
 public/build
 
-# Runtime / secrets / local env
+# Runtime / secrets / local env.
+# NOTE: the real .env / .env.local / .env.docker are EXCLUDED (they hold secrets).
+# .env.dist is the ONLY env file shipped into the image (baked as .env by the
+# Dockerfile) — it is secret-free and lets Symfony boot bin/console in prod.
 var
 .env
 .env.local
 .env.*.local
 .env.docker
+.env.example
 portfolio-docker/.env.docker
 portfolio-docker/.env.docker.example
 
