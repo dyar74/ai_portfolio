@@ -1,0 +1,36 @@
+# Build context is the REPO ROOT (docker/php/Dockerfile uses `COPY . .`).
+# Docker reads .dockerignore from the context root, so this file must live here
+# (NOT in portfolio-docker/). Anything listed is excluded from the context.
+
+# VCS / IDE
+.git
+.github
+.idea
+.vscode
+
+# Deps & build output (rebuilt inside the image)
+node_modules
+frontend/node_modules
+vendor
+public/build
+
+# Runtime / secrets / local env
+var
+.env
+.env.local
+.env.*.local
+.env.docker
+portfolio-docker/.env.docker
+portfolio-docker/.env.docker.example
+
+# Dev-only services & docs not needed in the prod image
+n8n
+docs
+
+# Backups & compose files (not needed inside the image)
+backup-*.sql.gz
+docker-compose*.yml
+compose.override.yaml
+
+# Keep this dir out of the image (it's a Makefile + env helper, not app code)
+portfolio-docker

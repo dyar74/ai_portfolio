@@ -1,5 +1,14 @@
-# Standalone production file:
+# Standalone production file.
+#
+# Env: a SINGLE .env lives at the REPO ROOT (same as dev). Compose auto-loads
+# it from the working directory, so run from the repo root — or use the
+# Makefile which does this for you:
+#   cd portfolio-docker && make prod-build && make prod-migrate && make prod-up
+#   # or, from the repo root:
 #   docker compose -f docker-compose.prod.yml up -d --build --wait
+#
+# NOTE: do NOT use `--env-file` (that flag form is for Docker Compose V2/V3
+# plugins; the standalone `docker-compose` v1 binary does not know it).
 # TLS/HSTS: terminate in front (Caddy/Traefik/host nginx) and proxy to 127.0.0.1:${HTTP_PORT}.
 name: portfolio
 

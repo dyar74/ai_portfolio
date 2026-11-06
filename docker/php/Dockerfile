@@ -92,7 +92,8 @@ COPY --from=frontend /app/public/build ./public/build
 
 RUN composer dump-autoload --classmap-authoritative --no-dev --no-scripts \
  && mkdir -p var/cache var/log \
- && chown -R www-data:www-data /var/www/html
+ && chown -R www-data:www-data /var/www/html \
+ && chmod 2775 /var/www/html/public
 
 USER www-data
 
