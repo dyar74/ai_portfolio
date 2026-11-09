@@ -10,7 +10,7 @@ export HOST_UID ?= $(shell id -u)
 export HOST_GID ?= $(shell id -g)
 
 .DEFAULT_GOAL := help
-.PHONY: help init up down restart build logs ps sh db redis install migrate migration test stan lint fresh backup prod-build prod-up prod-migrate prod-logs prod-down
+.PHONY: help init up down restart build logs ps sh db redis install migrate migration test stan lint fresh backup prod-build prod-up prod-migrate prod-logs prod-down deploy
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-14s\033[0m %s\n",$$1,$$2}'
@@ -101,3 +101,6 @@ prod-logs: ## Tail production logs
 
 prod-down: ## Stop production stack
 	$(COMPOSE_PROD) down
+
+deploy: ## One-shot deploy (pull + build + migrate + up + health check)
+	@bash $(ROOT)/portfolio-docker/deploy.sh

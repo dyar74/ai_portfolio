@@ -199,6 +199,70 @@ npm run build      # Vite build → ../public/build
 2. Common: MockHttpClient not matching the expected request
 3. Check the request URL, headers, and body in the test
 
+
+## Auto-Deploy (GitHub Actions → prod VM)
+
+Pushing to `main` automatically deploys to the production VM (after CI passes).
+
+### One-time setup
+
+1. **Create an SSH key** (on your laptop):
+   ```bash
+   ssh-keygen -t ed25519 -f ~/.ssh/deploy_prod -N ""
+   cat ~/.ssh/deploy_prod.pub
+   ```
+
+2. **Add the public key to the VM** (`/home/deploy/.ssh/authorized_keys`):
+   ```bash
+   ssh deploy@YOUR_VM_IP
+   mkdir -p ~/.ssh && chmod 700 ~/.ssh
+   echo "ssh-ed25519 AAAA... deploy@laptop" >> ~/.ssh/authorized_keys
+   chmod 600 ~/.ssh/authorized_keys
+   ```
+
+3. **Add GitHub secrets** (repo → Settings → Secrets and variables → Actions):
+
+   | Secret | Value |
+   |--------|-------|
+   | `DEPLOY_HOST` | `YOUR_VM_IP` |
+   | `DEPLOY_USER` | `deploy` |
+   | `DEPLOY_SSH_KEY` | contents of `~/.ssh/deploy_prod` (private key) |
+   | `HEALTH_URL` | `https://yourdomain.com/api/health` (optional) |
+
+4. **Create the `production` environment** (repo → Settings → Environments → New environment → `production`).
+
+### How it works
+
+```
+push to main
+  → CI (backend + frontend + docker smoke)
+  → deploy job:
+      SSH into VM
+      → bash portfolio-docker/deploy.sh
+          1. git pull
+          2. docker compose build
+          3. doctrine:migrations:migrate
+          4. docker compose up -d --wait
+          5. health check
+```
+
+### Manual deploy (from the VM)
+
+```bash
+cd /opt/portfolio/portfolio-docker
+make deploy
+# or: bash deploy.sh
+```
+
+### Rollback
+
+```bash
+cd /opt/portfolio
+git log --oneline -5
+git checkout <previous-commit>
+cd portfolio-docker && make deploy
+```
+
 ## Project structure
 
 ```

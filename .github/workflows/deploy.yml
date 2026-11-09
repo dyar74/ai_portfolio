@@ -1,0 +1,65 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  # Run CI first (backend + frontend + docker smoke)
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: production   # requires "production" environment to be configured
+    steps:
+      - name: Deploy to prod VM
+        env:
+          SSH_HOST: ${{ secrets.DEPLOY_HOST }}
+          SSH_USER: ${{ secrets.DEPLOY_USER }}
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_PATH: /opt/portfolio
+        run: |
+          set -euo pipefail
+
+          # Write the SSH key to a file with restrictive permissions
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          # Configure SSH (accept the host key on first run)
+          cat >> ~/.ssh/config <<EOF
+          Host $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/deploy_key
+            StrictHostKeyChecking accept-new
+          EOF
+
+          # Run the deploy script on the VM
+          ssh -o BatchMode=yes "$SSH_HOST" "cd $DEPLOY_PATH && bash portfolio-docker/deploy.sh"
+
+      - name: Verify health
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          HEALTH_URL: ${{ secrets.HEALTH_URL }}
+        run: |
+          set -euo pipefail
+          # Wait for the stack to come up
+          sleep 10
+          # Health check from the runner (if HEALTH_URL is set and reachable)
+          if [ -n "$HEALTH_URL" ]; then
+            echo "Checking $HEALTH_URL ..."
+            curl -sf --max-time 30 "$HEALTH_URL" | jq .
+          else
+            echo "HEALTH_URL not set — skipping external health check."
+          fi
