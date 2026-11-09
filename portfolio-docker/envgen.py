@@ -1,19 +1,31 @@
 #!/usr/bin/env python3
-"""Generate the repo-root `.env` from `.env.example` with random secrets.
+"""Generate the repo-root `.env` from `.env.example` with random dev secrets.
+
+DEV MODE ONLY: `make init` always produces a development environment
+(APP_ENV=dev, APP_DEBUG=1, Mailpit mailer, local n8n). Production values are
+injected by docker-compose.prod.yml at runtime — the host .env is never used
+directly in prod (the baked .env.dist + Compose's `environment:` block are).
 
 Design: credentials are stored as PARTS (MYSQL_USER, MYSQL_PASSWORD,
 MYSQL_DATABASE, REDIS_PASSWORD). The DSNs (DATABASE_URL, REDIS_URL,
-MESSENGER_TRANSPORT_DSN) are DERIVED from those parts so they can never
-drift out of sync with the credentials.
-
-In dev, the host `.env` carries the real DSNs. In prod, Compose re-derives the
-same DSNs from the same parts and injects them into the container (the baked
-.env.dist has them empty, so Compose's values always win).
+MESSENGER_TRANSPORT_DSN) are DERIVED from those parts so they can never drift
+out of sync with the credentials.
 
 Usage: envgen.py <path-to-env-file>   (writes in place)
 """
 import sys
 import secrets
+
+# Dev-mode defaults (overridden regardless of what .env.example says).
+DEV_DEFAULTS = {
+    "APP_ENV": "dev",
+    "APP_DEBUG": "1",
+    "XDEBUG_MODE": "off",
+    "MAILER_DSN": "smtp://mailpit:1025",
+    # Local n8n on the host (dev compose adds host.docker.internal:host-gateway).
+    "N8N_BASE_URL": "http://host.docker.internal:5678",
+    "CONTACT_TO_EMAIL": "info@novotek.com.ua",
+}
 
 
 def main(path: str) -> int:
@@ -51,10 +63,16 @@ def main(path: str) -> int:
             line = "REDIS_URL=redis://:" + redis_password + "@redis:6379"
         elif line.startswith("MESSENGER_TRANSPORT_DSN="):
             line = "MESSENGER_TRANSPORT_DSN=redis://:" + redis_password + "@redis:6379/messages"
+        else:
+            # Force dev-mode defaults for the well-known keys.
+            for key, value in DEV_DEFAULTS.items():
+                if line.startswith(key + "="):
+                    line = key + "=" + value
+                    break
         out.append(line)
 
     open(path, "w", encoding="utf-8").write("\n".join(out) + "\n")
-    print(f"[envgen] wrote {path} (random secrets + derived DSNs)")
+    print(f"[envgen] wrote {path} (DEV mode: random secrets + derived DSNs)")
     return 0
 
 
