@@ -72,6 +72,16 @@ final class ViteExtension extends AbstractExtension
                 $css[] = $asset['file'];
             }
 
+            // Vite emits entry CSS in the entry's "css" array (not as top-level
+            // manifest entries), so collect those too.
+            if (isset($asset['css']) && is_array($asset['css'])) {
+                foreach ($asset['css'] as $cssFile) {
+                    if (is_string($cssFile) && str_ends_with($cssFile, '.css')) {
+                        $css[] = $cssFile;
+                    }
+                }
+            }
+
             if (isset($asset['imports']) && is_array($asset['imports'])) {
                 foreach ($asset['imports'] as $import) {
                     if (isset($manifest[$import]['file']) && str_ends_with($manifest[$import]['file'], '.js')) {
