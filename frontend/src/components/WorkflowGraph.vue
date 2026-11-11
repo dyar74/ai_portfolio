@@ -81,13 +81,22 @@ function resolveLabel(node: FlowNode): string {
     return label;
 }
 
+/**
+ * Node width (px). Used to center the column of nodes in the graph viewport.
+ * Must match the `width` in the node style below.
+ */
+const NODE_WIDTH = 200;
+
 const flowNodes = computed<Node[]>(() =>
     props.nodes.map((n, i) => {
         const cat = nodeType(n.type);
         const label = `${resolveLabel(n)} · ${categoryLabel[cat]}`;
         return {
             id: n.id,
-            position: { x: 60, y: 60 + i * 90 },
+            // Center the node column: x=0 with fitViewOnInit=true lets VueFlow
+            // compute the correct pan/zoom to center the 200px-wide nodes in
+            // whatever viewport width (mobile 375px, desktop, etc.).
+            position: { x: 0, y: 60 + i * 90 },
             label,
             data: { label },
             style: {
@@ -95,7 +104,7 @@ const flowNodes = computed<Node[]>(() =>
                 color: 'white',
                 borderRadius: '10px',
                 padding: '10px 14px',
-                width: '200px',
+                width: `${NODE_WIDTH}px`,
                 fontSize: '12px',
                 fontWeight: '600',
             },

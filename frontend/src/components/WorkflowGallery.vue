@@ -5,14 +5,14 @@
             :key="wf.slug"
             class="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
         >
-            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div>
+            <div class="mb-4 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+                <div class="text-center sm:text-left">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {{ t(wf.nameKey) }}
                     </h3>
                     <p class="text-sm text-gray-500 dark:text-gray-400">{{ wf.slug }}</p>
                 </div>
-                <Button variant="secondary" size="sm" @click="download(wf)">
+                <Button variant="secondary" size="sm" class="w-full sm:w-auto" @click="download(wf)">
                     {{ t('gallery.download') }}
                 </Button>
             </div>
