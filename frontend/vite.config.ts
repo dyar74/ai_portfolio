@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
+import { i18nPrecompilePlugin } from './vite.i18n';
 
 // SECURITY: force RUNTIME-ONLY builds (no runtime compilers → no `new Function()`).
 //
@@ -21,7 +22,7 @@ import { fileURLToPath, URL } from 'node:url';
 const nm = (p: string) => fileURLToPath(new URL(`./node_modules/${p}`, import.meta.url));
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [i18nPrecompilePlugin('./src/locales'), vue()],
   resolve: {
     alias: {
       vue: nm('vue/dist/vue.runtime.esm-bundler.js'),
