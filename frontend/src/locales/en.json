@@ -14,7 +14,9 @@
     "about": "About",
     "contact": "Contact",
     "skipToContent": "Skip to content",
-    "to": "Go to {section}"
+    "to": "Go to {section}",
+    "open": "Open menu",
+    "close": "Close menu"
   },
   "theme": {
     "toggle": "Toggle color theme",

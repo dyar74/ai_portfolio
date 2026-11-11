@@ -11,6 +11,7 @@
         <span class="hidden sm:inline">{{ t('meta.siteName') }}</span>
       </button>
 
+      <!-- Desktop nav (hidden on mobile) -->
       <nav aria-label="primary" class="hidden items-center gap-1 md:flex">
         <button
           v-for="item in navItems"
@@ -55,27 +56,49 @@
             UK
           </button>
         </div>
+
+        <!-- Hamburger (mobile only) -->
+        <button
+          type="button"
+          :aria-label="mobileMenuOpen ? t('nav.close') : t('nav.open')"
+          :aria-expanded="mobileMenuOpen"
+          class="flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 md:hidden"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <svg v-if="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
       </div>
     </div>
 
-    <!-- Mobile nav -->
-    <nav aria-label="primary-mobile" class="flex gap-1 overflow-x-auto border-t border-gray-200 px-2 py-2 dark:border-gray-800 md:hidden">
-      <button
-        v-for="item in navItems"
-        :key="item.id"
-        type="button"
-        :aria-label="t('nav.to', { section: item.label })"
-        class="whitespace-nowrap rounded-lg px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
-        @click="goToSection(item.id)"
-      >
-        {{ item.label }}
-      </button>
+    <!-- Mobile menu (slide-down, no horizontal scroll) -->
+    <nav
+      v-show="mobileMenuOpen"
+      aria-label="primary-mobile"
+      class="border-t border-gray-200 dark:border-gray-800 md:hidden"
+    >
+      <ul class="space-y-1 px-4 py-3">
+        <li v-for="item in navItems" :key="item.id">
+          <button
+            type="button"
+            :aria-label="t('nav.to', { section: item.label })"
+            class="block w-full rounded-lg px-3 py-2.5 text-left text-base text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+            @click="goToSection(item.id); mobileMenuOpen = false"
+          >
+            {{ item.label }}
+          </button>
+        </li>
+      </ul>
     </nav>
   </header>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onBeforeUnmount } from 'vue';
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { useTheme } from '../../stores/theme';
@@ -88,6 +111,7 @@ const localeStore = useLocale();
 const router = useRouter();
 
 const isDark = computed(() => theme.isDark);
+const mobileMenuOpen = ref(false);
 
 const navItems = computed(() => [
   { id: 'services', label: t('nav.services') },
