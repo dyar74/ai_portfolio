@@ -36,10 +36,10 @@ init: ## Create the root .env (from .env.example) with random secrets + derived 
 	fi
 
 up: ## Build and start the dev stack
-	$(COMPOSE) up -d --build --wait --wait-timeout 300
+	$(COMPOSE) up -d --build --wait --wait-timeout 300 --remove-orphans
 
 down: ## Stop the dev stack
-	$(COMPOSE) down
+	$(COMPOSE) down --remove-orphans
 
 restart: ## Restart php + messenger
 	$(COMPOSE) restart php messenger
@@ -91,7 +91,7 @@ prod-build: ## Build production images
 	$(COMPOSE_PROD) build
 
 prod-up: ## Start production stack
-	$(COMPOSE_PROD) up -d --build --wait --wait-timeout 300
+	$(COMPOSE_PROD) up -d --build --wait --wait-timeout 300 --remove-orphans
 
 prod-migrate: ## Run migrations in production (explicit deploy step)
 	$(COMPOSE_PROD) run --rm php php bin/console doctrine:migrations:migrate --no-interaction
@@ -100,7 +100,7 @@ prod-logs: ## Tail production logs
 	$(COMPOSE_PROD) logs -f --tail=100
 
 prod-down: ## Stop production stack
-	$(COMPOSE_PROD) down
+	$(COMPOSE_PROD) down --remove-orphans
 
 deploy: ## One-shot deploy (pull + build + migrate + up + health check)
 	@bash $(ROOT)/portfolio-docker/deploy.sh
