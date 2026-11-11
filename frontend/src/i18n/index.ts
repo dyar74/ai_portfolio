@@ -2,14 +2,29 @@ import { createI18n, type I18n } from 'vue-i18n';
 import { detectLocale, setI18nSingleton, type Locale } from '../stores/locale';
 
 async function loadLocale(lang: Locale) {
-  // Vite serves .json as a module of NAMED exports (one per top-level key),
-  // NOT a `default` export. So we collect all named exports into a plain object
-  // (skipping `default`/symbol keys) and hand that to vue-i18n.
-  const mod = (await import(`../locales/${lang}.json`)) as Record<string, unknown>;
+  // The locale module is produced by our i18nPrecompilePlugin (vite.i18n.ts),
+  // which pre-compiles every message string into a message FUNCTION (so the
+  // runtime-only vue-i18n bundle can interpolate without `new Function()`).
+  //
+  // The module exposes BOTH named exports (one per top-level key) AND a
+  // `default` export (the whole tree). We prefer `default` when present because
+  // Rollup sometimes dedupes/collapses named exports into the default in the
+  // minified bundle — relying on named exports alone made messages empty and
+  // every t() call return the raw key path (e.g. "demos.heading").
+  const mod = (await import(`../locales/${lang}.json`)) as {
+    default?: Record<string, unknown>;
+    [key: string]: unknown;
+  };
+
+  if (mod.default && typeof mod.default === 'object') {
+    return mod.default as Record<string, unknown>;
+  }
+
+  // Fallback: collect named exports (Vite's JSON-import shape), skipping default.
   const messages: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(mod)) {
-    if (key === 'default') continue; // defensive: ignore if a default ever appears
-    if (value !== undefined) messages[key] = value;
+    if (key === 'default' || value === undefined) continue;
+    messages[key] = value;
   }
   return messages;
 }
