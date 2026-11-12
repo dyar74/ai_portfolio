@@ -1,9 +1,9 @@
 {
   "meta": {
-    "siteName": "Yaroslav Dupliak",
+    "siteName": "",
     "title": "AI Automation Engineer",
     "description": "I build intelligent automations with n8n, LLMs and AI agents.",
-    "ogTitle": "Yaroslav Dupliak — AI Automation Engineer",
+    "ogTitle": "",
     "ogDescription": "Multilingual (EN/UK) business-card site with live, working n8n demos."
   },
   "nav": {
@@ -30,7 +30,7 @@
   },
   "hero": {
     "greeting": "Hi, I'm",
-    "name": "Yaroslav Dupliak",
+    "name": "",
     "title": "AI Automation Engineer",
     "tagline": "I design and ship reliable, multilingual automation systems that connect your tools, data and teams.",
     "ctaDemo": "Try live demo",
@@ -194,7 +194,7 @@
     }
   },
   "footer": {
-    "rights": "© {year} Yaroslav Dupliak. All rights reserved.",
+    "rights": "© {year} All rights reserved.",
     "n8nLive": "n8n live",
     "n8nDown": "n8n down",
     "builtWith": "Built with Symfony, Vue & n8n"
@@ -271,7 +271,7 @@
     "nextStep": "Suggested next step"
   },
   "profile": {
-    "photoAlt": "Portrait of Yaroslav Dupliak",
-    "domain": "novotek.com.ua"
+    "photoAlt": "Portrait",
+    "domain": ""
   }
 }

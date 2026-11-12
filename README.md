@@ -1,4 +1,4 @@
-# Yaroslav Dupliak — AI Automation Engineer
+# AI Automation Engineer — Portfolio & n8n Template Library
 
 Multilingual (EN/UK) business-card website with **live, working n8n demos**.
 The site is a portfolio and a reusable template library.
@@ -54,7 +54,7 @@ make logs
 
 ### Import the n8n workflows
 
-1. Open your n8n instance: `https://n8n.novotek.com.ua`
+1. Open your n8n instance: `https://your-n8n.example.com`
 2. Go to **Workflows → Import from file**
 3. Import each JSON file from `n8n/workflows/`:
    - `contact-to-telegram.json`
@@ -78,12 +78,12 @@ make logs
 | `REDIS_URL` | Redis DSN (derived from parts) | `redis://:pass@redis:6379` |
 | `MESSENGER_TRANSPORT_DSN` | Messenger transport DSN (derived) | `redis://:pass@redis:6379/messages` |
 | `MAILER_DSN` | SMTP DSN (dev: mailpit) | `smtp://mailpit:1025` |
-| `N8N_BASE_URL` | n8n instance URL | `https://n8n.novotek.com.ua` |
+| `N8N_BASE_URL` | n8n instance URL | `https://your-n8n.example.com` |
 | `N8N_WEBHOOK_SECRET` | Webhook secret (shared with n8n) | `openssl rand -hex 32` |
 | `N8N_HMAC_KEY` | HMAC-SHA256 key for signing | `openssl rand -hex 32` |
 | `N8N_API_KEY` | n8n Public API key (optional) | `xapiv1-...` |
 | `TURNSTILE_SECRET` | Cloudflare Turnstile secret (optional) | `0x...` |
-| `CONTACT_TO_EMAIL` | Email for lead notifications | `info@novotek.com.ua` |
+| `CONTACT_TO_EMAIL` | Email for lead notifications | `you@example.com` |
 | `TRUSTED_PROXIES` | Comma-separated trusted proxy IPs (empty by default) | `172.16.0.0/12` |
 
 > **Single env file:** `make init` creates the repo-root `.env` (git-ignored) from `.env.example`.
@@ -186,7 +186,7 @@ are centered in their containers.
 
 ### n8n badge shows "down"
 1. Check `N8N_BASE_URL` is correct in `.env` (repo root)
-2. `curl -v https://n8n.novotek.com.ua/healthz` — should return 200
+2. `curl -v https://your-n8n.example.com/healthz` — should return 200
 3. Check n8n is running and the workflows are activated
 4. Check firewall/security groups allow outbound HTTPS from the Docker network
 
@@ -357,7 +357,7 @@ cd portfolio-docker && make deploy
 
 Apache License 2.0 — see [LICENSE](LICENSE) for details.
 
-© Yaroslav Dupliak
+© Your Name
 
 ## AI-Assisted
 

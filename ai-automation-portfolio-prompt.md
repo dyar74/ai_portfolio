@@ -1,5 +1,5 @@
 # Master Prompt: Bilingual Business-Card Site for an AI Automation Engineer
-Symfony + Vue 3 + live n8n demos (n8n.novotek.com.ua)
+Symfony + Vue 3 + live n8n demos (your-n8n.example.com)
 
 ## How to use (not part of the prompt)
 1. Put the contents of `portfolio-docker/` (Docker setup, delivered separately) into the repo root first. The prompt below assumes it exists and does NOT ask the AI to generate it.
@@ -12,14 +12,14 @@ Symfony + Vue 3 + live n8n demos (n8n.novotek.com.ua)
 ## ======== PROMPT START ========
 
 # ROLE
-You are a senior full-stack engineer (PHP/Symfony, Vue 3/TypeScript) and an n8n automation specialist. Build a production-ready, bilingual (EN/UK) business-card website for an AI Automation Engineer. The site must contain LIVE, working demos that run on my self-hosted n8n instance: https://n8n.novotek.com.ua
+You are a senior full-stack engineer (PHP/Symfony, Vue 3/TypeScript) and an n8n automation specialist. Build a production-ready, bilingual (EN/UK) business-card website for an AI Automation Engineer. The site must contain LIVE, working demos that run on my self-hosted n8n instance: https://your-n8n.example.com
 
 Deliver complete, runnable code, not pseudo-code or summaries. Work in phases (section 11). After each phase, list the files created and the commands to run and verify.
 
 # 1. OWNER DATA (config, never hardcoded in components)
-- Name: Yaroslav [Dupliak]
+- Name: Your Name
 - Title EN: "AI Automation Engineer" / UK: "Інженер з AI-автоматизації"
-- Email: [info@novotek.com.ua] | Telegram: [@dyar74] | LinkedIn: [https://www.linkedin.com/in/duplyak/] | GitHub: [https://github.com/dyar74/]
+- Email: [you@example.com] | Telegram: [@yourtelegram] | LinkedIn: [https://www.linkedin.com/in/yourprofile/] | GitHub: [https://github.com/youruser/]
 - Location: Ukraine, remote-friendly
 - Services (3-5): n8n workflow automation, LLM integrations (OpenAI/Anthropic), AI agents and RAG, API/CRM/Telegram integrations, process audits
 - Store all content in `content/en.json` and `content/uk.json` (or vue-i18n message files), never in templates.
@@ -72,7 +72,7 @@ export default defineConfig({
 
 # 4. ARCHITECTURE: Symfony as a secure BFF in front of n8n
 The browser MUST NEVER call n8n directly. Flow:
-`Vue -> POST /api/demo/{slug} (Symfony) -> POST https://n8n.novotek.com.ua/webhook/{path} -> JSON -> Symfony normalizes -> Vue`
+`Vue -> POST /api/demo/{slug} (Symfony) -> POST https://your-n8n.example.com/webhook/{path} -> JSON -> Symfony normalizes -> Vue`
 
 Implement:
 - `N8nClient` service: Symfony HttpClient, base URI `N8N_BASE_URL`, timeout 20s, max 1 retry on 502/503/504, header `X-Webhook-Secret: %env(N8N_WEBHOOK_SECRET)%`, `X-Signature: sha256=<HMAC-SHA256 of the raw body with N8N_HMAC_KEY>`, and `X-Request-Id` (uuid, propagated to logs).
@@ -81,7 +81,7 @@ Implement:
 - Rate limiting: `sliding_window` limiter, 5 req/min and 30 req/day per client IP per demo, Redis-backed, 429 with `Retry-After`.
 - Honeypot field + optional Cloudflare Turnstile verification (feature-flagged by env).
 - Error mapping: n8n timeout -> 504 `{error:"demo_timeout"}`, n8n 5xx -> 502, validation -> 422. Never leak n8n URLs, stack traces, or secrets. All `/api/*` responses carry `Cache-Control: no-store`.
-- `GET /api/health`: pings `https://n8n.novotek.com.ua/healthz` (cached 30s in Redis) and returns `{site:"ok", n8n:"ok|down", latencyMs}`. The footer shows a green/red "n8n live" badge.
+- `GET /api/health`: pings `https://your-n8n.example.com/healthz` (cached 30s in Redis) and returns `{site:"ok", n8n:"ok|down", latencyMs}`. The footer shows a green/red "n8n live" badge.
 - Optional `GET /api/n8n/last-executions`: uses the n8n Public API (`X-N8N-API-KEY`, server-side only) to return the last 5 executions of the demo workflows (id, workflow name, status, duration, startedAt, no payload data), cached 60s.
 - CORS closed (same-origin). Enforce `Content-Type: application/json` and an Origin/Referer check on POSTs. CSRF tokens are not needed for this stateless JSON API.
 
@@ -172,7 +172,7 @@ Design: clean, modern, dark/light theme (prefers-color-scheme + toggle persisted
 - README: architecture diagram (mermaid), how to run on the provided Docker setup, how to import the n8n workflows, required n8n credentials, env var table, troubleshooting.
 
 # 10. .env.example (app-side variables, document each one)
-`APP_ENV`, `APP_SECRET`, `DATABASE_URL`, `REDIS_URL`, `MESSENGER_TRANSPORT_DSN`, `MAILER_DSN`, `N8N_BASE_URL=https://n8n.novotek.com.ua`, `N8N_WEBHOOK_SECRET`, `N8N_HMAC_KEY`, `N8N_API_KEY`, `TURNSTILE_SECRET`, `CONTACT_TO_EMAIL`, `TRUSTED_PROXIES` (empty by default).
+`APP_ENV`, `APP_SECRET`, `DATABASE_URL`, `REDIS_URL`, `MESSENGER_TRANSPORT_DSN`, `MAILER_DSN`, `N8N_BASE_URL=https://your-n8n.example.com`, `N8N_WEBHOOK_SECRET`, `N8N_HMAC_KEY`, `N8N_API_KEY`, `TURNSTILE_SECRET`, `CONTACT_TO_EMAIL`, `TRUSTED_PROXIES` (empty by default).
 Never commit real values; `.env.local` is gitignored.
 
 # 11. DELIVERY PHASES (stop and show results after each)
@@ -192,7 +192,7 @@ Never commit real values; `.env.local` is gitignored.
 
 # ACCEPTANCE CRITERIA
 - `make init && make up` brings the stack up healthy; `/en` and `/uk` render fully translated at http://localhost:8080.
-- All 4 demos return real results through n8n.novotek.com.ua once the workflows are imported and activated.
+- All 4 demos return real results through your-n8n.example.com once the workflows are imported and activated.
 - The health badge reflects the real n8n status; the stats block shows real DemoRun aggregates.
 - Rate limits persist across a `php` container restart (Redis-backed).
 - Stopping the `messenger` container does not break form submission; queued jobs are processed after it restarts.
