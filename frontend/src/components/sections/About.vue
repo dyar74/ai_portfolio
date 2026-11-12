@@ -11,7 +11,7 @@
           <div class="flex flex-col gap-4">
             <p class="text-base leading-relaxed text-gray-700 dark:text-gray-300">{{ t('about.bio') }}</p>
             <p class="text-sm text-gray-500 dark:text-gray-400">
-              📍 {{ t('hero.location') }} · 🌐 {{ t('profile.domain') }}
+              📍 {{ t('hero.location') }} · 🌐 {{ siteDomain }}
             </p>
           </div>
 
@@ -37,8 +37,10 @@ import { useI18n } from 'vue-i18n';
 import SectionHeading from '../SectionHeading.vue';
 import Badge from '../Badge.vue';
 import ProfilePhoto from '../ProfilePhoto.vue';
+import { SITE } from '../../../site.defaults';
 
 const { t } = useI18n();
+const siteDomain = SITE.domain;
 const stack = computed(() =>
   (['symfony', 'php', 'vue', 'ts', 'tailwind', 'n8n', 'llm', 'mysql', 'redis', 'vite'] as const).map(
     (k) => t(`about.stack.items.${k}`),

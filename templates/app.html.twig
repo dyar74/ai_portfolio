@@ -18,7 +18,7 @@
     <meta property="og:title" content="{{ ogTitle|default(title) }}">
     <meta property="og:description" content="{{ ogDescription|default(description) }}">
     <meta property="og:url" content="{{ canonical|default('/') }}">
-    <meta property="og:site_name" content="Yaroslav Dupliak">
+    <meta property="og:site_name" content="{{ siteName|default('Yaroslav Dupliak') }}">
     <meta property="og:locale" content="{{ locale|default('en') == 'uk' ? 'uk_UA' : 'en_US' }}">
     <meta property="og:image" content="{{ ogImage|default('') }}">
     <meta name="twitter:image" content="{{ ogImage|default('') }}">
@@ -28,22 +28,22 @@
     <meta name="twitter:title" content="{{ ogTitle|default(title) }}">
     <meta name="twitter:description" content="{{ ogDescription|default(description) }}">
 
-    {# JSON-LD: Person + Service #}
+    {# JSON-LD: Person + Service — identity from .env (anonymization) #}
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "Person",
-        "name": "Yaroslav Dupliak",
+        "name": "{{ siteName|default('Yaroslav Dupliak') }}",
         "jobTitle": "AI Automation Engineer",
         "image": "{{ ogImage|default('') }}",
-        "url": "https://novotek.com.ua/",
-        "email": "mailto:info@novotek.com.ua",
+        "url": "https://{{ siteDomain|default('novotek.com.ua') }}/",
+        "email": "mailto:{{ contactEmail|default('info@novotek.com.ua') }}",
         "sameAs": [
-            "https://t.me/dyar74",
-            "https://www.linkedin.com/in/duplyak/",
-            "https://github.com/dyar74/"
+            {% for url in sameAs|default([]) %}
+            "{{ url }}"{% if not loop.last %},{% endif %}
+            {% endfor %}
         ],
-        "worksFor": { "@type": "Organization", "name": "Novotek" }
+        "worksFor": { "@type": "Organization", "name": "{{ companyName|default('Novotek') }}" }
     }
     </script>
 

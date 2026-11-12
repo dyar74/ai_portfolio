@@ -9,7 +9,7 @@
           {{ t('hero.greeting') }}
         </p>
         <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100 md:text-6xl">
-          {{ t('hero.name') }}
+          {{ displayName }}
         </h1>
         <p class="text-xl font-semibold text-blue-600 dark:text-blue-400 md:text-2xl">
           {{ t('hero.title') }}
@@ -28,11 +28,16 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Button from '../Button.vue';
 import ProfilePhoto from '../ProfilePhoto.vue';
+import { SITE } from '../../../site.defaults';
+import { useLocale } from '../../stores/locale';
 
 const { t } = useI18n();
+const { current } = useLocale();
+const displayName = computed(() => (current() === 'uk' ? SITE.nameUk : SITE.name));
 
 function scrollTo(id: string) {
   const el = document.getElementById(id);

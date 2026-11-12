@@ -37,12 +37,13 @@
 import { useI18n } from 'vue-i18n';
 import SectionHeading from '../SectionHeading.vue';
 import ContactDemo from '../demos/ContactDemo.vue';
+import { SITE } from '../../../site.defaults';
 
 const { t } = useI18n();
 const links = [
-  { key: 'email', icon: '✉️', label: t('contact.links.email'), value: 'info@novotek.com.ua', href: 'mailto:info@novotek.com.ua' },
-  { key: 'telegram', icon: '✈️', label: t('contact.links.telegram'), value: '@dyar74', href: 'https://t.me/dyar74' },
-  { key: 'linkedin', icon: '💼', label: t('contact.links.linkedin'), value: 'linkedin.com/in/duplyak', href: 'https://www.linkedin.com/in/duplyak/' },
-  { key: 'github', icon: '🐙', label: t('contact.links.github'), value: 'github.com/dyar74', href: 'https://github.com/dyar74/' },
+  { key: 'email', icon: '✉️', label: t('contact.links.email'), value: SITE.email, href: `mailto:${SITE.email}` },
+  { key: 'telegram', icon: '✈️', label: t('contact.links.telegram'), value: `@${SITE.telegramUser}`, href: SITE.telegramUrl },
+  { key: 'linkedin', icon: '💼', label: t('contact.links.linkedin'), value: `linkedin.com/in/${SITE.linkedinSlug}`, href: SITE.linkedinUrl },
+  { key: 'github', icon: '🐙', label: t('contact.links.github'), value: `github.com/${SITE.githubUser}`, href: SITE.githubUrl },
 ];
 </script>

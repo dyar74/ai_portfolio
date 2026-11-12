@@ -29,12 +29,13 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import HealthBadge from '../HealthBadge.vue';
+import { SITE } from '../../../site.defaults';
 
 const { t } = useI18n();
 const socialLinks = [
-  { key: 'email', icon: '✉️', label: t('contact.links.email'), href: 'mailto:info@novotek.com.ua' },
-  { key: 'telegram', icon: '✈️', label: t('contact.links.telegram'), href: 'https://t.me/dyar74' },
-  { key: 'linkedin', icon: '💼', label: t('contact.links.linkedin'), href: 'https://www.linkedin.com/in/duplyak/' },
-  { key: 'github', icon: '🐙', label: t('contact.links.github'), href: 'https://github.com/dyar74/' },
+  { key: 'email', icon: '✉️', label: t('contact.links.email'), href: `mailto:${SITE.email}` },
+  { key: 'telegram', icon: '✈️', label: t('contact.links.telegram'), href: SITE.telegramUrl },
+  { key: 'linkedin', icon: '💼', label: t('contact.links.linkedin'), href: SITE.linkedinUrl },
+  { key: 'github', icon: '🐙', label: t('contact.links.github'), href: SITE.githubUrl },
 ];
 </script>

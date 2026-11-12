@@ -14,6 +14,18 @@ x-php-env: &php-env
   TURNSTILE_SECRET: "${TURNSTILE_SECRET:-}"
   CONTACT_TO_EMAIL: "${CONTACT_TO_EMAIL:-}"
   XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+  # Site identity (anonymization) — from .env, defaults keep the site working
+  SITE_NAME: "${SITE_NAME:-Yaroslav Dupliak}"
+  SITE_NAME_UK: "${SITE_NAME_UK:-Ярослав Дупляк}"
+  CONTACT_EMAIL: "${CONTACT_EMAIL:-info@novotek.com.ua}"
+  SITE_DOMAIN: "${SITE_DOMAIN:-novotek.com.ua}"
+  COMPANY_NAME: "${COMPANY_NAME:-Novotek}"
+  TELEGRAM_USER: "${TELEGRAM_USER:-dyar74}"
+  TELEGRAM_URL: "${TELEGRAM_URL:-https://t.me/dyar74}"
+  LINKEDIN_SLUG: "${LINKEDIN_SLUG:-duplyak}"
+  LINKEDIN_URL: "${LINKEDIN_URL:-https://www.linkedin.com/in/duplyak/}"
+  GITHUB_USER: "${GITHUB_USER:-dyar74}"
+  GITHUB_URL: "${GITHUB_URL:-https://github.com/dyar74/}"
 
 x-php: &php
   build:

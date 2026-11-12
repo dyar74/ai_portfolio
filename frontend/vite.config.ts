@@ -22,6 +22,10 @@ import { i18nPrecompilePlugin } from './vite.i18n';
 const nm = (p: string) => fileURLToPath(new URL(`./node_modules/${p}`, import.meta.url));
 
 export default defineConfig({
+  // Expose SITE_* / CONTACT_* env vars to the frontend (import.meta.env).
+  // Identity (name, email, links, domain) is configured in .env so the
+  // project can be anonymized/re-branded without touching source.
+  envPrefix: ['SITE_', 'CONTACT_', 'VITE_'],
   plugins: [i18nPrecompilePlugin('./src/locales'), vue()],
   resolve: {
     alias: {

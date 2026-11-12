@@ -13,17 +13,22 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class AppController extends AbstractController
 {
+    /**
+     * SEO copy per locale. The display NAME is env-driven (anonymization):
+     * SITE_NAME (EN) / SITE_NAME_UK (UK) from the .env file, with the original
+     * values as fallbacks so the site works out-of-the-box.
+     */
     private const CONTENT = [
         'en' => [
-            'title' => 'Yaroslav Dupliak — AI Automation Engineer',
+            'name' => 'Yaroslav Dupliak',
+            'role' => 'AI Automation Engineer',
             'description' => 'I design and ship reliable, multilingual automation systems with n8n, LLMs and AI agents. Live, working demos powered by a real n8n instance.',
-            'ogTitle' => 'Yaroslav Dupliak — AI Automation Engineer',
             'ogDescription' => 'Multilingual (EN/UK) business-card site with live, working n8n demos.',
         ],
         'uk' => [
-            'title' => 'Ярослав Дупляк — Інженер з AI-автоматизації',
+            'name' => 'Ярослав Дупляк',
+            'role' => 'Інженер з AI-автоматизації',
             'description' => 'Я проєктую та запускаю надійні багатомовні автоматизації з n8n, LLM та AI-агентами. Живі демо на реальному n8n.',
-            'ogTitle' => 'Ярослав Дупляк — Інженер з AI-автоматизації',
             'ogDescription' => 'Багатомовний (EN/UK) сайт-візитка з живими демо на n8n.',
         ],
     ];
@@ -38,20 +43,36 @@ class AppController extends AbstractController
 
         $content = self::CONTENT[$locale];
 
+        // Anonymization: identity comes from the .env file (Symfony dotenv
+        // populates $_SERVER), with the original values as fallbacks.
+        $name = $locale === 'uk'
+            ? ($_SERVER['SITE_NAME_UK'] ?? $content['name'])
+            : ($_SERVER['SITE_NAME'] ?? $content['name']);
+        $title = $name . ' — ' . $content['role'];
+
         // Canonical base: use the production domain unless a dev host is served.
-        // The request host is correct in production (novotek.com.ua via nginx);
-        // in dev it is localhost:8080. We prefer the request host so it always matches.
+        // The request host is correct in production (SITE_DOMAIN via nginx);
+        // in dev it is localhost:8080. We prefer the request host so it matches.
         $base = rtrim($request->getScheme() . '://' . $request->getHttpHost(), '/');
         $canonical = $base . '/' . $locale;
 
         return $this->render('app.html.twig', [
             'locale' => $locale,
-            'title' => $content['title'],
+            'title' => $title,
             'description' => $content['description'],
-            'ogTitle' => $content['ogTitle'],
+            'ogTitle' => $title,
             'ogDescription' => $content['ogDescription'],
             'canonical' => $canonical,
             'ogImage' => $base . '/images/profile.jpg',
+            'siteName' => $name,
+            'siteDomain' => $_SERVER['SITE_DOMAIN'] ?? 'novotek.com.ua',
+            'contactEmail' => $_SERVER['CONTACT_EMAIL'] ?? 'info@novotek.com.ua',
+            'companyName' => $_SERVER['COMPANY_NAME'] ?? 'Novotek',
+            'sameAs' => [
+                $_SERVER['TELEGRAM_URL'] ?? 'https://t.me/dyar74',
+                $_SERVER['LINKEDIN_URL'] ?? 'https://www.linkedin.com/in/duplyak/',
+                $_SERVER['GITHUB_URL'] ?? 'https://github.com/dyar74/',
+            ],
         ]);
     }
 }
