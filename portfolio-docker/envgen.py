@@ -24,7 +24,8 @@ DEV_DEFAULTS = {
     "MAILER_DSN": "smtp://mailpit:1025",
     # Local n8n on the host (dev compose adds host.docker.internal:host-gateway).
     "N8N_BASE_URL": "http://host.docker.internal:5678",
-    "CONTACT_TO_EMAIL": "info@novotek.com.ua",
+    # Anonymization: no hardcoded contact email — set CONTACT_TO_EMAIL in .env.
+    "CONTACT_TO_EMAIL": "",
 }
 
 
