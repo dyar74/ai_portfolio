@@ -2,8 +2,8 @@
   <div class="grid gap-6 lg:grid-cols-2">
     <!-- Form -->
     <div class="flex flex-col gap-4">
-      <h3 class="text-lg font-semibold">{{ t('demoContact.title') }}</h3>
-      <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('demoContact.desc') }}</p>
+      <h3 class="text-center text-lg font-semibold">{{ t('demoContact.title') }}</h3>
+      <p class="text-center text-sm text-gray-600 dark:text-gray-400">{{ t('demoContact.desc') }}</p>
 
       <form novalidate @submit.prevent="onSubmit" aria-label="contact-form">
         <div class="flex flex-col gap-4">
@@ -69,7 +69,7 @@
 
     <!-- Result / timeline -->
     <div aria-live="polite" :aria-busy="isRunning" class="flex flex-col gap-4">
-      <h3 class="text-lg font-semibold">{{ t('demos.heading') }}</h3>
+      <h3 class="text-center text-lg font-semibold">{{ t('demos.heading') }}</h3>
 
       <div v-if="isRunning" class="flex items-center gap-2 text-gray-500">
         <Spinner size="sm" /> {{ t('common.loading') }}

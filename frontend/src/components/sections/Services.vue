@@ -4,7 +4,7 @@
       <SectionHeading :heading="t('services.heading')" :subheading="t('services.subheading')" />
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Card v-for="(item, key) in items" :key="key" class="transition-transform hover:-translate-y-1">
-          <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ item.title }}</h3>
+          <h3 class="mb-2 text-center text-lg font-semibold text-gray-900 dark:text-gray-100">{{ item.title }}</h3>
           <p class="text-sm text-gray-600 dark:text-gray-400">{{ item.desc }}</p>
         </Card>
       </div>

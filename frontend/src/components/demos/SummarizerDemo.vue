@@ -2,8 +2,8 @@
   <div class="grid gap-6 lg:grid-cols-2">
     <!-- Form -->
     <div class="flex flex-col gap-4">
-      <h3 class="text-lg font-semibold">{{ t('demoSummarize.title') }}</h3>
-      <p class="text-sm text-gray-600 dark:text-gray-400">{{ t('demoSummarize.desc') }}</p>
+      <h3 class="text-center text-lg font-semibold">{{ t('demoSummarize.title') }}</h3>
+      <p class="text-center text-sm text-gray-600 dark:text-gray-400">{{ t('demoSummarize.desc') }}</p>
 
       <div class="flex flex-col gap-4">
         <div class="flex flex-col gap-1.5">
@@ -31,7 +31,7 @@
 
     <!-- Result -->
     <div aria-live="polite" :aria-busy="isRunning" class="flex flex-col gap-4">
-      <h3 class="text-lg font-semibold">{{ t('demoSummarize.tldr') }}</h3>
+      <h3 class="text-center text-lg font-semibold">{{ t('demoSummarize.tldr') }}</h3>
 
       <div v-if="isRunning" class="flex items-center gap-2 text-gray-500">
         <Spinner size="sm" /> {{ t('common.loading') }}

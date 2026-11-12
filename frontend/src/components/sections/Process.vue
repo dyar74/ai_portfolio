@@ -7,8 +7,8 @@
           <span class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
             {{ index + 1 }}
           </span>
-          <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ step.title }}</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">{{ step.desc }}</p>
+          <h3 class="text-center text-base font-semibold text-gray-900 dark:text-gray-100">{{ step.title }}</h3>
+          <p class="text-center text-sm text-gray-600 dark:text-gray-400">{{ step.desc }}</p>
         </li>
       </ol>
     </div>

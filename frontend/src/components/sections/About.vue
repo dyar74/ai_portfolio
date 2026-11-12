@@ -16,7 +16,7 @@
           </div>
 
           <div>
-            <h3 class="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            <h3 class="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
               {{ t('about.stack.heading') }}
             </h3>
             <div class="flex flex-wrap gap-2">

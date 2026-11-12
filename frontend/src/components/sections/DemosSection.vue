@@ -1,8 +1,10 @@
 <template>
   <section id="demos" class="scroll-mt-20 py-16 md:py-24">
     <div class="mx-auto max-w-6xl px-4">
-      <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div class="mb-4 flex flex-wrap items-center justify-center gap-4">
         <SectionHeading :heading="t('demos.heading')" :subheading="t('demos.subheading')" />
+      </div>
+      <div class="mb-8 flex justify-center">
         <HealthBadge />
       </div>
 
