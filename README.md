@@ -31,8 +31,7 @@ graph LR
 ### Prerequisites
 - Docker + Docker Compose
 - Make
-- Node.js 22 (for local frontend dev, optional — Docker handles it)
-- PHP 8.3 (for local backend dev, optional — Docker handles it)
+- Python 3 (for `make init` — generates secrets + DSNs)
 
 ### Run the stack
 
@@ -75,9 +74,9 @@ make logs
 |---|---|---|
 | `APP_ENV` | Symfony environment (`dev`/`prod`/`test`) | `dev` |
 | `APP_SECRET` | Symfony secret (32+ hex chars) | `openssl rand -hex 32` |
-| `DATABASE_URL` | MySQL DSN | `mysql://user:pass@mysql:3306/db?serverVersion=8.4&charset=utf8mb4` |
-| `REDIS_URL` | Redis DSN | `redis://:pass@redis:6379` |
-| `MESSENGER_TRANSPORT_DSN` | Messenger transport DSN | `redis://:pass@redis:6379/messages` |
+| `DATABASE_URL` | MySQL DSN (derived from parts) | `mysql://user:pass@mysql:3306/db?serverVersion=8.4&charset=utf8mb4` |
+| `REDIS_URL` | Redis DSN (derived from parts) | `redis://:pass@redis:6379` |
+| `MESSENGER_TRANSPORT_DSN` | Messenger transport DSN (derived) | `redis://:pass@redis:6379/messages` |
 | `MAILER_DSN` | SMTP DSN (dev: mailpit) | `smtp://mailpit:1025` |
 | `N8N_BASE_URL` | n8n instance URL | `https://n8n.novotek.com.ua` |
 | `N8N_WEBHOOK_SECRET` | Webhook secret (shared with n8n) | `openssl rand -hex 32` |
@@ -87,6 +86,11 @@ make logs
 | `CONTACT_TO_EMAIL` | Email for lead notifications | `info@novotek.com.ua` |
 | `TRUSTED_PROXIES` | Comma-separated trusted proxy IPs (empty by default) | `172.16.0.0/12` |
 
+> **Single env file:** `make init` creates the repo-root `.env` (git-ignored) from `.env.example`.
+> DSNs (`DATABASE_URL`, `REDIS_URL`, `MESSENGER_TRANSPORT_DSN`) are **derived** from the
+> credential parts (`MYSQL_USER`, `MYSQL_PASSWORD`, `REDIS_PASSWORD`) by `envgen.py`,
+> so they always match. In prod, `docker-compose.prod.yml` re-derives the same DSNs.
+
 ## Development
 
 ### Make targets
@@ -95,6 +99,8 @@ make logs
 make help          # Show all targets
 make up            # Build and start the dev stack
 make down          # Stop the dev stack
+make restart       # Restart php + messenger
+make build         # Build dev images
 make logs          # Tail logs
 make ps            # Show containers
 make sh            # Shell in the php container
@@ -102,11 +108,20 @@ make db            # MySQL client
 make redis         # Redis CLI
 make install       # composer install
 make migrate       # Run Doctrine migrations
+make migration     # Generate a migration from entity changes
 make test          # PHPUnit
 make stan          # PHPStan
 make lint          # Frontend lint
 make fresh         # Wipe volumes and rebuild from scratch
 make backup        # Dump MySQL to backup-DATE.sql.gz
+
+# Production
+make prod-build    # Build production images
+make prod-up       # Start production stack
+make prod-migrate  # Run migrations in production
+make prod-logs     # Tail production logs
+make prod-down     # Stop production stack
+make deploy        # One-shot deploy (pull + build + migrate + up + health check)
 ```
 
 ### Backend (PHP)
@@ -120,7 +135,7 @@ php bin/console doctrine:migrations:migrate  # Migrations
 php bin/console messenger:consume async    # Messenger worker (manual)
 ```
 
-### Frontend (Vue 3 + TypeScript)
+### Frontend (Vue 3 + TypeScript + Vite)
 
 ```bash
 cd frontend
@@ -131,6 +146,16 @@ npm run typecheck  # vue-tsc
 npm run test       # Vitest
 npm run build      # Vite build → ../public/build
 ```
+
+**i18n:** The frontend uses `vue-i18n` with `en.json` and `uk.json` locale files.
+A custom Vite plugin (`vite.i18n.ts`) pre-compiles locale messages at build time
+so that named interpolation (`{variable}`) works in the CSP-safe, runtime-only build
+(no `new Function()`). The `mod.default` pattern in `i18n/index.ts` handles Rollup's
+named→default export collapsing.
+
+**Mobile:** The header uses a hamburger menu (no horizontal scroll). All section
+headings and sub-headers are centered. Workflow gallery cards and graph nodes
+are centered in their containers.
 
 ### API endpoints
 
@@ -199,6 +224,18 @@ npm run build      # Vite build → ../public/build
 2. Common: MockHttpClient not matching the expected request
 3. Check the request URL, headers, and body in the test
 
+### i18n shows raw keys (e.g. `demos.heading`)
+1. Ensure `vite.i18n.ts` plugin is included in `vite.config.ts`
+2. Ensure `i18n/index.ts` uses `mod.default` (Rollup collapses named exports to default)
+3. Rebuild: `npm run build` → verify `_i18n-precompiled_*.js` chunks exist in the build output
+4. Hard-refresh the browser (Ctrl+Shift+R)
+
+### Orphan container warning
+```
+WARN[0000] Found orphan containers (portfolio-node-1, portfolio-mailpit-1)
+```
+All `up`/`down` Make targets now include `--remove-orphans`. If you see this warning,
+you're using a stale Makefile. Run `git pull` and retry.
 
 ## Auto-Deploy (GitHub Actions → prod VM)
 
@@ -249,9 +286,10 @@ push to main
 ### Manual deploy (from the VM)
 
 ```bash
-cd /opt/portfolio/portfolio-docker
-make deploy
-# or: bash deploy.sh
+cd /opt/portfolio
+bash portfolio-docker/deploy.sh
+# or:
+cd portfolio-docker && make deploy
 ```
 
 ### Rollback
@@ -285,21 +323,34 @@ cd portfolio-docker && make deploy
 │   └── services.yaml       # Service wiring
 ├── frontend/               # Vue 3 + TypeScript + Vite
 │   ├── src/
-│   │   ├── components/     # Vue components
+│   │   ├── components/     # Vue components (28)
+│   │   │   ├── layout/     # Header (hamburger menu), Footer
+│   │   │   ├── sections/   # Hero, Services, Demos, Gallery, Process, About, Contact
+│   │   │   ├── demos/      # ContactDemo, TranslateDemo, SummarizerDemo, LeadScoringDemo
+│   │   │   └── ...         # SectionHeading, HealthBadge, LiveStats, Tabs, etc.
 │   │   ├── composables/    # Vue composables (useDemo, etc.)
-│   │   ├── stores/         # Pinia stores
+│   │   ├── stores/         # Pinia stores (theme, locale)
 │   │   ├── views/          # Page views
 │   │   ├── locales/        # i18n JSON (en.json, uk.json)
 │   │   ├── data/           # Static data (workflows.ts)
 │   │   └── utils/          # Utilities (api.ts)
-│   ├── __tests__/          # Vitest tests
+│   ├── __tests__/          # Vitest tests (14)
+│   ├── vite.i18n.ts        # Vite plugin: pre-compile locale messages
 │   └── vite.config.ts      # Vite config
-├── n8n/workflows/          # Importable n8n workflow JSON
-├── docker/                 # Dockerfiles + nginx config (READ-ONLY)
-├── portfolio-docker/       # Makefile
+├── n8n/workflows/          # 4 importable n8n workflow JSONs
+├── docker/                 # Dockerfiles + nginx config (READ-ONLY contract)
+│   ├── php/                # PHP-FPM Dockerfile
+│   ├── nginx/              # Nginx config
+│   └── mysql/              # MySQL config
+├── portfolio-docker/       # Makefile + deploy.sh + envgen.py
+├── docs/                   # Deployment guides
+│   └── deploy-oracle-cloudflare.md
 ├── tests/                  # PHPUnit tests
-├── .github/workflows/      # CI (GitHub Actions)
-└── public/build/           # Vite build output (committed for prod)
+├── .github/workflows/      # CI (ci.yml) + Auto-deploy (deploy.yml)
+├── LICENSE                 # Apache License 2.0
+├── SKILL.md                # Development principles (ub-mode)
+├── memory.md               # Project decision log
+└── public/images/          # Profile photo (profile.jpg)
 ```
 
 ## License

@@ -1,4 +1,41 @@
+# Project Memory — my_business_card
 
-- [2026-11-05T19:04:14.154Z] my_business_card prod build: the user's failing command `cd .. && docker compose --env-file portfolio-docker/.env.docker -f docker-compose.prod.yml build` fails because (1) they cd OUT of my_business_card, so relative paths break (env-file/compose not found); (2) .env.docker has empty MAILER_DSN/N8N_WEBHOOK_SECRET/N8N_HMAC_KEY/CONTACT_TO_EMAIL which the prod compose's ${VAR:?} requires non-empty. Fix: run from repo root WITHOUT cd, and fill .env.docker first. Use `make prod-build`.
-- [2026-11-05T20:24:42.509Z] my_business_card has TWO .env files that both feed compose: (1) portfolio-docker/.env.docker (git-ignored, local-only — the one make prod-build passes via --env-file) and (2) repo-root .env (git-ignored, auto-loaded by Compose from CWD). Both had EMPTY N8N_WEBHOOK_SECRET/N8N_HMAC_KEY/CONTACT_TO_EMAIL, causing 'Missing mandatory value ... N8N_WEBHOOK_SECRET'. Fix = fill BOTH. .env.docker is NOT committed (empty git log), so on a fresh prod clone you must create it (make init) AND fill it.
-- [2026-11-05T20:51:55.888Z] my_business_card now uses a SINGLE env file: repo-root .env (git-ignored, auto-loaded by Compose from CWD). portfolio-docker/.env.docker was DELETED. docker-compose.prod.yml now uses :- (optional) for N8N_WEBHOOK_SECRET/N8N_HMAC_KEY/N8N_API_KEY (N8nClient handles empty gracefully: hmacSign falls back to plain sha256, getLastExecutions returns [] if apiKey empty). Makefile: ENV_FILE/--env-file removed; init now creates root .env from .env.example. CAUTION: in .env, last definition wins — keep Symfony-managed ###> blocks from shadowing real values (empty APP_SECRET= was overriding the real one). make prod-build verified EXIT=0.
+## Environment & Deployment
+
+- **[2026-11-05]** `docker compose --env-file portfolio-docker/.env.docker` fails: (1) user cd'd OUT of repo, breaking relative paths; (2) `.env.docker` had empty required vars. Fix: run from repo root, use `make prod-build`.
+- **[2026-11-05]** Two `.env` files caused confusion. Consolidated to **single repo-root `.env`** (git-ignored, auto-loaded by Compose). `portfolio-docker/.env.docker` deleted. `docker-compose.prod.yml` uses `:-` (optional) for N8N secrets. `envgen.py` derives DSNs from credential parts.
+- **[2026-11-09]** **Auto-deploy** via GitHub Actions → SSH → `bash portfolio-docker/deploy.sh`. Push to `main` triggers CI + deploy. `deploy.sh` does: git pull → `make prod-build` → `make prod-migrate` → `make prod-up` → health check.
+- **[2026-11-12]** **Orphan container warning** fixed: all `up`/`down` Make targets now include `--remove-orphans` (`up`, `down`, `prod-up`, `prod-down`). `deploy.sh` calls `make prod-up` so it inherits the fix.
+
+## Frontend / i18n
+
+- **[2026-11-09]** **CSP-safe i18n build:** Replaced runtime `new Function()` (banned by CSP) with:
+  - `vite.i18n.ts` — Vite plugin that pre-compiles `en.json`/`uk.json` into `defineMessage()` chunks at build time. Named interpolation (`{variable}`) works in runtime-only Vue + vue-i18n.
+  - `i18n/index.ts` — uses `mod.default` to handle Rollup's named→default export collapsing.
+  - Build output: `_i18n-precompiled_en-*.js` + `_i18n-precompiled_uk-*.js` chunks.
+- **[2026-11-11]** **Mobile nav:** Replaced horizontal scroll bar (`overflow-x-auto`) with hamburger menu. 6 nav buttons (~476px) didn't fit in 375px viewport. Now: ☰ toggle → vertical button list (`v-show`), auto-closes on tap.
+- **[2026-11-12]** **Centering fixes:**
+  - `SectionHeading.vue`: all 6 section h2s + subheadings centered (`text-center` + `mx-auto`).
+  - `DemosSection.vue`: HealthBadge moved below heading (was right-aligned).
+  - Demo cards (4): h3 titles + descriptions centered.
+  - `Services`, `Process`, `About`: sub-headers centered.
+  - `WorkflowGallery.vue`: card header `flex-col items-center` (button `w-full` on mobile, `w-auto` on desktop).
+  - `WorkflowGraph.vue`: nodes at `x=0` (was `x=60`) so `fitViewOnInit` centers the 200px column in any viewport.
+
+## Backend
+
+- **[2026-11-05]** **Single env file:** repo-root `.env` is the single source of truth. `envgen.py` derives `DATABASE_URL`, `REDIS_URL`, `MESSENGER_TRANSPORT_DSN` from credential parts (`MYSQL_USER`, `MYSQL_PASSWORD`, `REDIS_PASSWORD`). `docker-compose.prod.yml` re-derives the same DSNs.
+- **[2026-11-09]** **CSP subscriber:** Symfony sets `Content-Security-Policy` headers. Nginx must NOT override. Inline JSON-LD is allowed via `script-src 'unsafe-inline'` for that specific script tag.
+
+## Key Decisions
+
+| Decision | Rationale |
+|---|---|
+| Browser never calls n8n directly | BFF handles rate limiting, validation, HMAC, error mapping |
+| Pre-compiled i18n (Vite plugin) | CSP bans `new Function()`; runtime-only Vue needs pre-compiled messages |
+| `mod.default` in i18n/index.ts | Rollup collapses named exports to default in ESM bundles |
+| Hamburger menu (not scroll bar) | 6 buttons don't fit in 375px; standard mobile pattern |
+| Centered headers | Consistent, clean look across all sections |
+| `--remove-orphans` on all up/down | Eliminates orphan container warnings |
+| Single `.env` (repo root) | One source of truth; `envgen.py` derives DSNs |
+| `deploy.sh` calls `make` targets | Single place to manage build/migrate/up/health sequence |

@@ -136,13 +136,13 @@ cd /opt/portfolio
 
 # Create the production env file
 cd portfolio-docker
-make init    # creates .env.docker with random secrets
+make init    # creates .env (repo root) with random secrets + derived DSNs
 
-# Edit .env.docker — fill in required values:
-nano .env.docker
+# Edit .env — fill in required values:
+nano ../.env   # repo-root .env (one level up from portfolio-docker)
 ```
 
-**Required values in `.env.docker`:**
+**Required values in `.env` (repo root):**
 
 ```env
 HTTP_PORT=8080
@@ -192,7 +192,7 @@ make prod-up
 
 # Verify
 make prod-logs
-docker compose --env-file .env.docker -f ../docker-compose.prod.yml ps
+docker compose -f ../docker-compose.prod.yml ps
 ```
 
 Expected output:
@@ -443,7 +443,7 @@ make backup
 # Creates: backup-2025-01-01.sql.gz
 
 # Restore:
-gunzip -c backup-2025-01-01.sql.gz | docker compose --env-file .env.docker -f ../docker-compose.prod.yml exec -T mysql mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"
+gunzip -c backup-2025-01-01.sql.gz | docker compose --env-file .env -f ../docker-compose.prod.yml exec -T mysql mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"
 ```
 
 ### 6.4 Monitoring
@@ -466,7 +466,7 @@ Or use **Uptime Kuma** / **Better Stack** / **Datadog** for proper monitoring.
 ```bash
 # On the VM:
 # 1. Check Docker containers:
-docker compose --env-file /opt/portfolio/portfolio-docker/.env.docker -f /opt/portfolio/docker-compose.prod.yml ps
+docker compose -f /opt/portfolio/docker-compose.prod.yml ps
 
 # 2. Check nginx is listening:
 ss -tlnp | grep 8080
@@ -505,11 +505,11 @@ sudo openssl s_client -connect 127.0.0.1:443 -servername yourdomain.com 2>/dev/n
 
 ```bash
 # Check Redis is up:
-docker compose --env-file /opt/portfolio/portfolio-docker/.env.docker -f /opt/portfolio/docker-compose.prod.yml exec redis redis-cli -a "<REDIS_PASSWORD>" ping
+docker compose -f /opt/portfolio/docker-compose.prod.yml exec redis redis-cli -a "<REDIS_PASSWORD>" ping
 # Expected: PONG
 
 # Check limiter keys:
-docker compose ... exec redis redis-cli -a "<REDIS_PASSWORD>" keys "*rate_limiter*"
+docker compose -f /opt/portfolio/docker-compose.prod.yml exec redis redis-cli -a "<REDIS_PASSWORD>" keys "*rate_limiter*"
 ```
 
 ### 7.4 n8n health showing "down"
@@ -550,7 +550,7 @@ sudo apt install -y caddy git make
 git clone https://github.com/dyar74/my_business_card /opt/portfolio
 cd /opt/portfolio/portfolio-docker
 make init
-nano .env.docker          # fill in secrets
+nano ../.env        # fill in secrets (repo root)
 make prod-build
 make prod-migrate
 make prod-up
